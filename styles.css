@@ -1400,6 +1400,52 @@ footer {
   text-align: center;
 }
 
+/* Case Study CTA */
+
+.case-page .case-cta {
+  margin: 64px 0;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+}
+
+.case-page .case-cta h2 {
+  margin-bottom: 12px;
+}
+
+.case-page .case-cta p {
+  max-width: 720px;
+  margin-bottom: 24px;
+  color: var(--text-secondary);
+}
+
+.case-page .case-cta-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.case-page .case-cta-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 11px 22px;
+  border: 1px solid var(--azure);
+  border-radius: 8px;
+  font-weight: 600;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.case-page .case-cta-actions a:hover {
+  transform: translateY(-2px);
+  background: var(--azure-light);
+  color: #04101c;
+}
 /* Responsive */
 
 @media (max-width: 950px) {
