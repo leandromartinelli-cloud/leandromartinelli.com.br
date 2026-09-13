@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AKS: Azure RBAC ou Kubernetes RBAC? | Leandro Martinelli</title>
+
+  <meta
+    name="description"
+    content="Entenda as diferenças entre Azure RBAC e Kubernetes RBAC no Azure Kubernetes Service (AKS), quando utilizar cada modelo e quais pontos avaliar em ambientes corporativos."
+  >
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="article-page">
+
+    <article class="technical-article">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html#artigos">Artigos</a>
+        <span>/</span>
+        <span>Kubernetes & Azure</span>
+      </div>
+
+      <header class="article-header">
+        <p class="article-category">Kubernetes • Azure • Security</p>
+
+        <h1>AKS: Azure RBAC ou Kubernetes RBAC?</h1>
+
+        <p class="article-lead">
+          Ao definir o modelo de acesso a um cluster Azure Kubernetes Service,
+          uma das decisões mais importantes é determinar onde as permissões
+          serão administradas: no Azure ou dentro do próprio Kubernetes.
+        </p>
+
+        <div class="article-meta">
+          <span>Leandro Martinelli</span>
+          <span>•</span>
+          <span>Setembro de 2026</span>
+          <span>•</span>
+          <span>Cloud Infrastructure & Architecture</span>
+        </div>
+      </header>
+
+      <section class="article-content">
+
+        <h2>O problema não é apenas autenticação</h2>
+
+        <p>
+          Quando trabalhamos com AKS, é comum associar Microsoft Entra ID
+          diretamente ao controle de acesso do cluster. Entretanto,
+          autenticação e autorização são responsabilidades diferentes.
+        </p>
+
+        <p>
+          O Microsoft Entra ID pode ser utilizado para autenticar usuários,
+          grupos e identidades que acessam o Kubernetes API. Depois que a
+          identidade é validada, o cluster ainda precisa determinar quais
+          ações aquela identidade poderá executar.
+        </p>
+
+        <p>
+          É justamente nesse ponto que entram os modelos de autorização:
+          Azure RBAC para Kubernetes e Kubernetes RBAC.
+        </p>
+
+        <div class="article-callout">
+          <strong>Autenticação responde:</strong>
+          quem está tentando acessar o cluster?
+          <br>
+          <strong>Autorização responde:</strong>
+          o que essa identidade pode fazer dentro do cluster?
+        </div>
+
+        <h2>O que é Kubernetes RBAC?</h2>
+
+        <p>
+          Kubernetes RBAC é o modelo de autorização nativo do Kubernetes.
+          As permissões são declaradas através de recursos armazenados
+          dentro do próprio cluster.
+        </p>
+
+        <p>Os principais objetos são:</p>
+
+        <ul>
+          <li><code>Role</code>: define permissões dentro de um namespace.</li>
+          <li><code>ClusterRole</code>: define permissões em nível de cluster.</li>
+          <li><code>RoleBinding</code>: associa uma Role ou ClusterRole a uma identidade dentro de um namespace.</li>
+          <li><code>ClusterRoleBinding</code>: associa uma ClusterRole em nível de cluster.</li>
+        </ul>
+
+        <p>
+          Nesse modelo, o Kubernetes API Server é responsável por avaliar
+          diretamente se uma determinada requisição deve ser autorizada.
+        </p>
+
+        <div class="article-flow">
+          <span>Microsoft Entra ID</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Autenticação</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Kubernetes RBAC</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Recurso Kubernetes</span>
+        </div>
+
+        <h2>O que é Azure RBAC para Kubernetes?</h2>
+
+        <p>
+          No modelo Azure RBAC para Kubernetes, as decisões de autorização
+          podem ser administradas através do Azure utilizando atribuições
+          de função associadas às identidades do Microsoft Entra ID.
+        </p>
+
+        <p>
+          Isso permite utilizar a mesma estrutura de identidade e governança
+          já existente no Azure para controlar o acesso aos recursos do
+          Kubernetes.
+        </p>
+
+        <p>
+          O AKS disponibiliza funções internas específicas para esse cenário,
+          entre elas:
+        </p>
+
+        <ul>
+          <li>Azure Kubernetes Service RBAC Reader</li>
+          <li>Azure Kubernetes Service RBAC Writer</li>
+          <li>Azure Kubernetes Service RBAC Admin</li>
+          <li>Azure Kubernetes Service RBAC Cluster Admin</li>
+        </ul>
+
+        <div class="article-flow">
+          <span>Microsoft Entra ID</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Azure Role Assignment</span>
+          <span class="article-flow-arrow">→</span>
+          <span>AKS Authorization</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Recurso Kubernetes</span>
+        </div>
+
+        <h2>Azure RBAC x Kubernetes RBAC</h2>
+
+        <div class="article-table-wrapper">
+          <table class="article-table">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th>Azure RBAC</th>
+                <th>Kubernetes RBAC</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Gerenciamento</td>
+                <td>Azure / Microsoft Entra ID</td>
+                <td>Dentro do cluster Kubernetes</td>
+              </tr>
+
+              <tr>
+                <td>Permissões</td>
+                <td>Azure Role Assignments</td>
+                <td>Roles e ClusterRoles</td>
+              </tr>
+
+              <tr>
+                <td>Associação</td>
+                <td>Usuários, grupos e identidades Entra ID</td>
+                <td>RoleBindings e ClusterRoleBindings</td>
+              </tr>
+
+              <tr>
+                <td>Governança corporativa</td>
+                <td>Centralizada</td>
+                <td>Administrada por cluster</td>
+              </tr>
+
+              <tr>
+                <td>Granularidade Kubernetes</td>
+                <td>Alta para recursos suportados</td>
+                <td>Muito alta e nativa</td>
+              </tr>
+
+              <tr>
+                <td>Escala com múltiplos clusters</td>
+                <td>Facilita centralização</td>
+                <td>Exige gestão das configurações por cluster</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Qual modelo utilizar?</h2>
+
+        <p>
+          Em ambientes corporativos Azure, Azure RBAC tende a ser uma
+          excelente escolha quando existe a necessidade de centralizar
+          identidade, governança e administração de permissões.
+        </p>
+
+        <p>
+          Ele permite que grupos do Microsoft Entra ID sejam utilizados
+          diretamente dentro da estratégia de acesso ao AKS, reduzindo a
+          necessidade de manter controles completamente separados entre
+          Azure e Kubernetes.
+        </p>
+
+        <p>
+          Kubernetes RBAC continua sendo extremamente importante quando
+          precisamos trabalhar com permissões específicas do ecossistema
+          Kubernetes ou implementar controles mais próximos das aplicações,
+          namespaces e workloads.
+        </p>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <span>Azure RBAC</span>
+
+            <h3>Faz bastante sentido quando:</h3>
+
+            <ul>
+              <li>o ambiente possui forte governança através do Azure;</li>
+              <li>Microsoft Entra ID é a identidade corporativa central;</li>
+              <li>existem vários clusters ou equipes;</li>
+              <li>o gerenciamento centralizado de acesso é prioridade.</li>
+            </ul>
+          </div>
+
+          <div class="article-decision-card">
+            <span>Kubernetes RBAC</span>
+
+            <h3>Faz bastante sentido quando:</h3>
+
+            <ul>
+              <li>são necessárias regras muito específicas dentro do cluster;</li>
+              <li>aplicações utilizam Service Accounts;</li>
+              <li>o controle precisa acompanhar manifests Kubernetes;</li>
+              <li>as permissões fazem parte do ciclo de vida da aplicação.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <h2>Os dois modelos podem coexistir?</h2>
+
+        <p>
+          Sim. Uma arquitetura de acesso não precisa obrigatoriamente tratar
+          Azure RBAC e Kubernetes RBAC como opções mutuamente exclusivas.
+        </p>
+
+        <p>
+          Em determinados cenários, Azure RBAC pode ser utilizado como camada
+          central de governança para usuários e equipes, enquanto Kubernetes
+          RBAC continua sendo utilizado dentro do cluster para permissões
+          específicas de workloads, Service Accounts e componentes internos.
+        </p>
+
+        <h2>Um ponto importante: RBAC não é acesso ao kubeconfig</h2>
+
+        <p>
+          Outro ponto que costuma gerar confusão é a diferença entre obter
+          credenciais do cluster e possuir autorização para executar ações
+          dentro dele.
+        </p>
+
+        <p>
+          Conseguir recuperar as credenciais necessárias para acessar um
+          cluster AKS não significa automaticamente possuir permissão sobre
+          todos os recursos Kubernetes.
+        </p>
+
+        <p>
+          O acesso ao cluster e a autorização dentro do Kubernetes devem ser
+          analisados como camadas diferentes da arquitetura de segurança.
+        </p>
+
+        <div class="article-callout">
+          Uma identidade pode conseguir autenticar no cluster e, ainda assim,
+          receber <code>Forbidden</code> ao tentar listar Secrets, criar Pods
+          ou consultar outros recursos.
+        </div>
+
+        <h2>Minha recomendação arquitetural</h2>
+
+        <p>
+          Para ambientes corporativos executando AKS no Azure, eu considero
+          importante começar pelo modelo de identidade da organização antes
+          de definir as permissões Kubernetes.
+        </p>
+
+        <p>
+          Quando Microsoft Entra ID já é utilizado como identidade corporativa,
+          Azure RBAC oferece uma camada consistente para governança e
+          gerenciamento centralizado de usuários e grupos.
+        </p>
+
+        <p>
+          Kubernetes RBAC permanece fundamental para controles específicos
+          do Kubernetes e para autorizações relacionadas diretamente aos
+          workloads.
+        </p>
+
+        <p>
+          Mais importante do que escolher apenas uma tecnologia é estabelecer
+          claramente onde cada tipo de permissão será administrado e evitar
+          acessos excessivos, especialmente funções equivalentes a
+          Cluster Admin.
+        </p>
+
+        <h2>Conclusão</h2>
+
+        <p>
+          Azure RBAC e Kubernetes RBAC resolvem problemas semelhantes, mas
+          operam em modelos de gerenciamento diferentes.
+        </p>
+
+        <p>
+          Azure RBAC aproxima o controle de acesso ao modelo de governança
+          do Azure e do Microsoft Entra ID. Kubernetes RBAC mantém a
+          autorização dentro do modelo nativo do Kubernetes.
+        </p>
+
+        <p>
+          Em arquiteturas AKS maduras, compreender essa separação ajuda a
+          implementar acesso baseado em menor privilégio, melhorar a
+          governança e reduzir a complexidade operacional.
+        </p>
+
+      </section>
+
+      <footer class="article-author">
+        <p class="article-author-label">Sobre o autor</p>
+
+        <h2>Leandro Martinelli</h2>
+
+        <p>
+          Especialista em Infraestrutura Cloud com atuação em arquitetura,
+          automação, Kubernetes, Microsoft Azure, segurança, DevOps e
+          modernização de ambientes corporativos.
+        </p>
+
+        <a href="../index.html#artigos">← Voltar para Artigos</a>
+      </footer>
+
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>
