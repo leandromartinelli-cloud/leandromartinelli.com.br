@@ -489,7 +489,7 @@ section > h2::after {
 
 @media (max-width: 760px) {
   .project-card {
-    padding: 24px;
+    padding: 18px;
   }
 
   .project-highlights {
