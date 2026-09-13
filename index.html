@@ -142,27 +142,90 @@
       </div>
     </section>
 
-    <section id="projetos">
+        <section id="projetos">
       <h2>Projetos</h2>
 
-      <article>
-        <p>Azure • AKS • Terraform • Docker • Kubernetes</p>
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Azure • AKS • Terraform • Docker • Kubernetes
+          </p>
 
-        <h3>Azure AKS Lab</h3>
+          <h3>Azure AKS Lab</h3>
 
-        <p>
-          Laboratório Cloud Native criado para demonstrar o provisionamento
-          de infraestrutura Azure com Terraform, Azure Kubernetes Service,
-          Azure Container Registry, Docker e Kubernetes.
-        </p>
+          <p class="project-description">
+            Laboratório Cloud Native desenvolvido para demonstrar uma arquitetura
+            Kubernetes no Microsoft Azure, com infraestrutura provisionada como
+            código e processo completo de construção e publicação de containers.
+          </p>
 
-        <a
-          href="https://github.com/leandromartinelli-cloud/azure-aks-lab"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Ver projeto no GitHub
-        </a>
+          <div class="project-highlights">
+            <div>
+              <strong>Objetivo</strong>
+              <span>
+                Construir um ambiente reproduzível para execução de workloads
+                containerizados no Azure Kubernetes Service.
+              </span>
+            </div>
+
+            <div>
+              <strong>Arquitetura</strong>
+              <span>
+                Azure Kubernetes Service, Azure Container Registry e recursos
+                Azure integrados para execução da aplicação.
+              </span>
+            </div>
+
+            <div>
+              <strong>Automação</strong>
+              <span>
+                Terraform para provisionamento da infraestrutura e GitHub
+                para versionamento do código e documentação técnica.
+              </span>
+            </div>
+          </div>
+
+          <a
+            class="project-link"
+            href="https://github.com/leandromartinelli-cloud/azure-aks-lab"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Explorar projeto no GitHub →
+          </a>
+        </div>
+
+        <div class="project-architecture" aria-label="Arquitetura do Azure AKS Lab">
+          <span class="architecture-label">ARQUITETURA</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>Terraform</strong>
+              <span>Infrastructure as Code</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Azure</strong>
+              <span>Cloud Infrastructure</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>ACR</strong>
+              <span>Container Registry</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>AKS</strong>
+              <span>Kubernetes</span>
+            </div>
+          </div>
+        </div>
       </article>
     </section>
 
