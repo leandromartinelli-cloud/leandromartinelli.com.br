@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Enterprise Azure & AKS Platform | Leandro Martinelli</title>
+
+  <meta
+    name="description"
+    content="Case study sobre arquitetura, segurança, Kubernetes, automação, governança e operação de uma plataforma enterprise baseada em Microsoft Azure e AKS."
+  >
+
+  <link
+    rel="canonical"
+    href="https://leandromartinelli.com.br/cases/enterprise-azure-aks-platform.html"
+  >
+
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Leandro Martinelli">
+  <meta
+    property="og:title"
+    content="Enterprise Azure & AKS Platform | Leandro Martinelli"
+  >
+  <meta
+    property="og:description"
+    content="Arquitetura, segurança, Kubernetes, automação, governança e operação de uma plataforma enterprise baseada em Microsoft Azure e AKS."
+  >
+  <meta
+    property="og:url"
+    content="https://leandromartinelli.com.br/cases/enterprise-azure-aks-platform.html"
+  >
+  <meta
+    property="og:image"
+    content="https://leandromartinelli.com.br/assets/images/enterprise-azure-aks-platform-og.jpg"
+  >
+  <meta
+    property="og:image:alt"
+    content="Enterprise Azure & AKS Platform — Case Study de Leandro Martinelli"
+  >
+  <meta property="og:image:width" content="1734">
+  <meta property="og:image:height" content="907">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta
+    name="twitter:title"
+    content="Enterprise Azure & AKS Platform | Leandro Martinelli"
+  >
+  <meta
+    name="twitter:description"
+    content="Arquitetura, segurança, Kubernetes, automação, governança e operação de uma plataforma enterprise baseada em Microsoft Azure e AKS."
+  >
+  <meta
+    name="twitter:image"
+    content="https://leandromartinelli.com.br/assets/images/enterprise-azure-aks-platform-og.jpg"
+  >
+  <meta
+    name="twitter:image:alt"
+    content="Enterprise Azure & AKS Platform — Case Study de Leandro Martinelli"
+  >
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <article class="article-page case-page">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html">← Voltar para o portfólio</a>
+      </div>
+
+      <header class="article-header">
+
+        <p class="article-eyebrow">
+          CASE STUDY • CLOUD ARCHITECTURE
+        </p>
+
+        <h1>
+          Construindo e Operando uma Plataforma Enterprise
+          com Azure e AKS
+        </h1>
+
+        <p class="article-subtitle">
+          Arquitetura, segurança, Kubernetes, automação, conectividade,
+          governança e operação de ambientes Cloud em escala corporativa.
+        </p>
+
+        <div class="article-meta">
+          <span>Microsoft Azure</span>
+          <span>AKS</span>
+          <span>Terraform</span>
+          <span>Azure DevOps</span>
+          <span>Cloud Architecture</span>
+        </div>
+
+      </header>
+
+
+      <!-- 01 — CONTEXTO -->
+
+<section class="article-section">
+
+  <p class="article-section-number">01</p>
+
+  <h2>Contexto</h2>
+
+  <p>
+    A evolução de ambientes corporativos para Cloud exige uma abordagem
+    arquitetural capaz de equilibrar escalabilidade, segurança, automação,
+    governança e eficiência operacional.
+  </p>
+
+  <p>
+    Neste cenário, a plataforma foi estruturada sobre Microsoft Azure,
+    utilizando diferentes serviços de infraestrutura, dados, integração,
+    segurança e observabilidade, além do Azure Kubernetes Service (AKS)
+    como plataforma para execução de workloads containerizados.
+  </p>
+
+  <p>
+    A arquitetura precisava atender diferentes necessidades de workloads
+    e equipes, mantendo padrões consistentes de acesso, conectividade,
+    provisionamento e operação.
+  </p>
+
+  <div class="article-callout">
+
+    <strong>Escala e complexidade</strong>
+
+    <p>
+      O ambiente envolve múltiplas subscriptions e diferentes componentes
+      de uma plataforma Cloud corporativa, exigindo padronização,
+      automação e governança para sustentar sua evolução.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 02 — DESAFIO -->
+
+<section class="article-section">
+
+  <p class="article-section-number">02</p>
+
+  <h2>O desafio arquitetural</h2>
+
+  <p>
+    O principal desafio não estava apenas em disponibilizar recursos
+    de Cloud, mas em construir uma plataforma capaz de crescer mantendo
+    segurança, padronização e controle operacional.
+  </p>
+
+  <p>
+    A arquitetura precisava conciliar diferentes tipos de workloads,
+    equipes com responsabilidades distintas, múltiplas subscriptions
+    e requisitos de conectividade entre ambientes, sem transformar o
+    crescimento da plataforma em aumento proporcional da complexidade
+    operacional.
+  </p>
+
+  <div class="article-decision-grid">
+
+    <div class="article-decision-card">
+      <h3>Escala</h3>
+      <p>
+        Estruturar a plataforma para suportar o crescimento de recursos,
+        subscriptions e workloads sem perder padrões arquiteturais.
+      </p>
+    </div>
+
+    <div class="article-decision-card">
+      <h3>Segurança</h3>
+      <p>
+        Estabelecer identidade e autorização de forma consistente,
+        aplicando o princípio do menor privilégio aos diferentes
+        componentes da plataforma.
+      </p>
+    </div>
+
+    <div class="article-decision-card">
+      <h3>Conectividade</h3>
+      <p>
+        Integrar recursos Cloud com ambientes corporativos e diferentes
+        pontos de conectividade, mantendo isolamento e controle de tráfego.
+      </p>
+    </div>
+
+    <div class="article-decision-card">
+      <h3>Automação</h3>
+      <p>
+        Reduzir atividades manuais utilizando Infrastructure as Code,
+        pipelines e processos padronizados de entrega.
+      </p>
+    </div>
+
+    <div class="article-decision-card">
+      <h3>Governança</h3>
+      <p>
+        Aplicar padrões de organização, acesso, segurança e operação
+        capazes de acompanhar a evolução da plataforma.
+      </p>
+    </div>
+
+    <div class="article-decision-card">
+      <h3>Eficiência operacional</h3>
+      <p>
+        Criar mecanismos que permitam operar e evoluir o ambiente com
+        maior previsibilidade, observabilidade e controle.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Princípio de arquitetura</strong>
+
+    <p>
+      O objetivo não era simplesmente adicionar mais recursos à Cloud,
+      mas estabelecer uma plataforma reutilizável, segura e governável
+      sobre a qual diferentes workloads pudessem evoluir.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 03 — ARQUITETURA -->
+
+<section class="article-section">
+
+  <p class="article-section-number">03</p>
+
+  <h2>Visão da arquitetura</h2>
+
+  <p>
+    A arquitetura foi organizada em camadas para separar responsabilidades
+    e permitir que identidade, conectividade, segurança, workloads,
+    serviços de plataforma, dados e automação evoluam de forma integrada.
+  </p>
+
+  <p>
+    Essa abordagem reduz o acoplamento entre componentes e estabelece
+    uma fundação comum para diferentes tipos de workloads e serviços
+    executados no Microsoft Azure.
+  </p>
+
+  <figure class="case-architecture-diagram">
+    <img
+      src="../assets/images/enterprise-azure-aks-platform-architecture.png"
+      alt="Arquitetura de referência de uma plataforma enterprise baseada em Microsoft Azure e AKS"
+      loading="lazy"
+    >
+    <figcaption>
+      Visão arquitetural de referência — Azure, AKS, segurança, networking,
+      governança, dados e automação.
+    </figcaption>
+  </figure>
+
+  <div class="article-architecture">
+
+    <div>
+      <span>01</span>
+      <strong>Landing Zone & Governance</strong>
+      <p>
+        Organização da plataforma, subscriptions, políticas, controle
+        de acesso e gestão de custos.
+      </p>
+    </div>
+
+    <div>
+      <span>02</span>
+      <strong>Identity & Security</strong>
+      <p>
+        Microsoft Entra ID, RBAC e identidades utilizadas por usuários,
+        automações e workloads.
+      </p>
+    </div>
+
+    <div>
+      <span>03</span>
+      <strong>Networking</strong>
+      <p>
+        Segmentação de rede, controle de tráfego, resolução de nomes,
+        acesso privado e conectividade híbrida.
+      </p>
+    </div>
+
+    <div>
+      <span>04</span>
+      <strong>AKS & Compute</strong>
+      <p>
+        Plataforma Kubernetes para execução e isolamento de workloads
+        containerizados com diferentes requisitos.
+      </p>
+    </div>
+
+    <div>
+      <span>05</span>
+      <strong>Platform & Data Services</strong>
+      <p>
+        Serviços Azure utilizados pelas aplicações e plataformas de dados,
+        integração e analytics.
+      </p>
+    </div>
+
+    <div>
+      <span>06</span>
+      <strong>Automation & Delivery</strong>
+      <p>
+        Infrastructure as Code, versionamento, pipelines e processos
+        automatizados de entrega e evolução.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Princípio arquitetural</strong>
+
+    <p>
+      Nenhuma dessas camadas deve ser tratada isoladamente. Uma alteração
+      em identidade, rede ou governança pode impactar diretamente workloads,
+      pipelines e serviços de plataforma. A arquitetura precisa ser
+      analisada como um sistema integrado.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 04 — AZURE NETWORKING -->
+
+<section class="article-section">
+
+  <p class="article-section-number">04</p>
+
+  <h2>Azure & Networking</h2>
+
+  <p>
+    A camada de networking funciona como uma das fundações da plataforma.
+    Além de conectar recursos Azure, ela precisa controlar os caminhos de
+    comunicação entre workloads, serviços de plataforma, ambientes
+    corporativos e integrações externas.
+  </p>
+
+  <p>
+    A arquitetura considera segmentação de redes, controle de tráfego,
+    resolução de nomes e conectividade híbrida, permitindo que diferentes
+    componentes se comuniquem de forma controlada e previsível.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Virtual Networks</h3>
+      <p>
+        VNets e subnets permitem segmentar componentes da plataforma
+        conforme função, requisitos de segurança e padrões de
+        conectividade.
+      </p>
+    </div>
+
+    <div>
+      <h3>Hybrid Connectivity</h3>
+      <p>
+        VPN Gateway e ExpressRoute possibilitam integrar workloads Azure
+        com datacenters e outros ambientes corporativos quando necessário.
+      </p>
+    </div>
+
+    <div>
+      <h3>Traffic Control</h3>
+      <p>
+        NSGs, rotas e controles de rede ajudam a limitar os fluxos
+        permitidos entre diferentes componentes da arquitetura.
+      </p>
+    </div>
+
+    <div>
+      <h3>Private Access</h3>
+      <p>
+        Private Endpoints podem ser utilizados para manter o acesso a
+        determinados serviços Azure através da rede privada, reduzindo
+        exposição desnecessária à Internet.
+      </p>
+    </div>
+
+    <div>
+      <h3>DNS</h3>
+      <p>
+        A resolução de nomes precisa acompanhar a topologia de rede,
+        especialmente em cenários híbridos e no consumo privado de
+        serviços Azure.
+      </p>
+    </div>
+
+    <div>
+      <h3>Resiliência de conectividade</h3>
+      <p>
+        Diferentes caminhos de conectividade podem ser utilizados conforme
+        os requisitos de disponibilidade, integração e continuidade dos
+        workloads.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Decisão arquitetural</strong>
+
+    <p>
+      Em ambientes híbridos, conectividade não deve ser analisada apenas
+      como alcance de rede. Rotas, DNS, segurança, disponibilidade e
+      dependências das aplicações precisam ser avaliados em conjunto.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 05 — AKS -->
+
+<section class="article-section">
+
+  <p class="article-section-number">05</p>
+
+  <h2>AKS & Workloads</h2>
+
+  <p>
+    O Azure Kubernetes Service (AKS) funciona como uma das principais
+    plataformas de execução para workloads containerizados, permitindo
+    combinar a flexibilidade do Kubernetes com serviços gerenciados
+    do ecossistema Azure.
+  </p>
+
+  <p>
+    Em um ambiente corporativo, entretanto, a arquitetura não termina
+    na criação do cluster. É necessário considerar capacidade computacional,
+    isolamento entre workloads, identidade, autorização, escalabilidade,
+    atualização e sustentação contínua da plataforma.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Node Pools</h3>
+      <p>
+        Diferentes node pools permitem separar workloads conforme requisitos
+        de processamento, capacidade, disponibilidade e características
+        específicas de execução.
+      </p>
+    </div>
+
+    <div>
+      <h3>Workload Segmentation</h3>
+      <p>
+        A distribuição dos workloads precisa considerar isolamento,
+        utilização de recursos e impacto operacional entre aplicações
+        executadas no cluster.
+      </p>
+    </div>
+
+    <div>
+      <h3>Identity & Authorization</h3>
+      <p>
+        Microsoft Entra ID, Azure RBAC e mecanismos nativos do Kubernetes
+        permitem estruturar autenticação e autorização conforme as
+        responsabilidades das equipes.
+      </p>
+    </div>
+
+    <div>
+      <h3>Workload Identity</h3>
+      <p>
+        Workloads podem utilizar identidades federadas para acessar
+        serviços Azure sem depender do armazenamento de credenciais
+        estáticas dentro do cluster.
+      </p>
+    </div>
+
+    <div>
+      <h3>Scaling</h3>
+      <p>
+        A capacidade da plataforma deve acompanhar a demanda dos workloads,
+        considerando escalabilidade de pods e infraestrutura computacional.
+      </p>
+    </div>
+
+    <div>
+      <h3>Operations</h3>
+      <p>
+        Upgrade, troubleshooting, observabilidade, capacidade e segurança
+        fazem parte do ciclo contínuo de sustentação do ambiente Kubernetes.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>AKS é uma plataforma, não apenas um cluster</strong>
+
+    <p>
+      A operação de Kubernetes em ambiente corporativo exige decisões que
+      atravessam compute, networking, identidade, segurança, automação e
+      observabilidade. O desenho do cluster precisa acompanhar o ciclo de
+      vida dos workloads que ele suporta.
+    </p>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Aprofundamento técnico</strong>
+
+    <p>
+      A decisão entre Azure RBAC e Kubernetes RBAC é abordada em detalhes
+      no artigo
+      <a href="../artigos/aks-azure-rbac-vs-kubernetes-rbac.html">
+        AKS: Azure RBAC ou Kubernetes RBAC?
+      </a>.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 06 — IDENTITY & SECURITY -->
+
+<section class="article-section">
+
+  <p class="article-section-number">06</p>
+
+  <h2>Identity & Security</h2>
+
+  <p>
+    Em uma plataforma enterprise, identidade e segurança precisam fazer
+    parte do desenho arquitetural desde o início. Usuários, equipes,
+    pipelines e workloads possuem necessidades diferentes de acesso e
+    devem ser tratados de acordo com suas responsabilidades.
+  </p>
+
+  <p>
+    A estratégia combina identidade corporativa, controle de acesso
+    baseado em funções e autenticação federada, reduzindo a dependência
+    de credenciais estáticas e permitindo aplicar o princípio do menor
+    privilégio em diferentes camadas da plataforma.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Microsoft Entra ID</h3>
+      <p>
+        Identidade corporativa utilizada como base para autenticação
+        de usuários e integração com diferentes serviços Azure.
+      </p>
+    </div>
+
+    <div>
+      <h3>Role-Based Access Control</h3>
+      <p>
+        Azure RBAC permite associar permissões às responsabilidades
+        necessárias, evitando concessões excessivas de acesso aos
+        recursos da plataforma.
+      </p>
+    </div>
+
+    <div>
+      <h3>Federated Identity</h3>
+      <p>
+        OIDC e Workload Identity Federation permitem que automações
+        obtenham identidade no Azure sem depender de secrets de longa
+        duração armazenados nos pipelines.
+      </p>
+    </div>
+
+    <div>
+      <h3>AKS Authorization</h3>
+      <p>
+        A autorização dentro do AKS pode combinar Microsoft Entra ID
+        com Azure RBAC ou mecanismos nativos de Kubernetes RBAC,
+        conforme o modelo de governança adotado.
+      </p>
+    </div>
+
+    <div>
+      <h3>Workload Identity</h3>
+      <p>
+        Aplicações executadas no Kubernetes podem utilizar identidades
+        específicas para acessar recursos Azure, evitando compartilhar
+        credenciais entre workloads.
+      </p>
+    </div>
+
+    <div>
+      <h3>Secrets & Sensitive Data</h3>
+      <p>
+        Credenciais e informações sensíveis devem permanecer fora do
+        código e ser consumidas através de mecanismos seguros de
+        identidade e gerenciamento de segredos.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Princípio do menor privilégio</strong>
+
+    <p>
+      A pergunta não deve ser apenas “quem consegue acessar?”, mas
+      “qual é a menor permissão necessária para executar essa função?”.
+      Essa abordagem reduz exposição e melhora a governança do ambiente.
+    </p>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Direção arquitetural</strong>
+
+    <p>
+      Sempre que possível, identidades federadas são preferíveis ao uso
+      de credenciais persistentes. Isso reduz a necessidade de armazenar,
+      distribuir e rotacionar secrets utilizados por automações.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 07 — INFRASTRUCTURE AS CODE -->
+
+<section class="article-section">
+
+  <p class="article-section-number">07</p>
+
+  <h2>Infrastructure as Code</h2>
+
+  <p>
+    À medida que a plataforma cresce, o provisionamento manual deixa de
+    ser sustentável. A infraestrutura precisa ser reproduzível,
+    versionada e submetida aos mesmos princípios de engenharia utilizados
+    no desenvolvimento de software.
+  </p>
+
+  <p>
+    O Terraform é utilizado para transformar definições de infraestrutura
+    em código, permitindo padronizar configurações, revisar alterações e
+    manter histórico das decisões realizadas ao longo da evolução do
+    ambiente.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Versionamento</h3>
+      <p>
+        As definições de infraestrutura permanecem em repositórios Git,
+        permitindo acompanhar alterações e manter histórico de evolução.
+      </p>
+    </div>
+
+    <div>
+      <h3>Revisão</h3>
+      <p>
+        Alterações podem passar por Pull Requests e revisão antes de
+        serem incorporadas à versão principal da infraestrutura.
+      </p>
+    </div>
+
+    <div>
+      <h3>Terraform Plan</h3>
+      <p>
+        Antes da execução, o plano permite avaliar quais recursos serão
+        criados, modificados ou removidos pela alteração proposta.
+      </p>
+    </div>
+
+    <div>
+      <h3>Terraform Apply</h3>
+      <p>
+        Após validação, a alteração pode ser aplicada de forma controlada,
+        reduzindo intervenções manuais no ambiente.
+      </p>
+    </div>
+
+    <div>
+      <h3>Remote State</h3>
+      <p>
+        O estado remoto permite centralizar as informações utilizadas
+        pelo Terraform e estabelecer uma base consistente para execução
+        dos processos de infraestrutura.
+      </p>
+    </div>
+
+    <div>
+      <h3>Padronização</h3>
+      <p>
+        Padrões reutilizáveis reduzem diferenças entre implementações
+        e facilitam a adoção das decisões arquiteturais da plataforma.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-flow">
+
+    <span>Code</span>
+    <span>→</span>
+    <span>Pull Request</span>
+    <span>→</span>
+    <span>Plan</span>
+    <span>→</span>
+    <span>Review</span>
+    <span>→</span>
+    <span>Apply</span>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Infrastructure as Code como processo</strong>
+
+    <p>
+      O ganho do IaC não está apenas em automatizar a criação de recursos.
+      O principal benefício está em tornar mudanças de infraestrutura
+      versionáveis, revisáveis, reproduzíveis e auditáveis.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 08 — CI/CD & AUTOMATION -->
+
+<section class="article-section">
+
+  <p class="article-section-number">08</p>
+
+  <h2>CI/CD & Automation</h2>
+
+  <p>
+    A automação da plataforma não termina no provisionamento da
+    infraestrutura. Mudanças em infraestrutura, configurações e workloads
+    precisam seguir processos controlados de validação e entrega.
+  </p>
+
+  <p>
+    Azure DevOps e pipelines de CI/CD são utilizados para transformar
+    essas mudanças em fluxos reproduzíveis, reduzindo atividades manuais
+    e criando rastreabilidade entre código, revisão e implantação.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Source Control</h3>
+      <p>
+        Código de infraestrutura e automações permanecem versionados,
+        permitindo rastrear alterações e utilizar branches e Pull Requests
+        como parte do processo de mudança.
+      </p>
+    </div>
+
+    <div>
+      <h3>Validation</h3>
+      <p>
+        Pipelines podem executar validações antes da implantação,
+        identificando problemas de configuração ou infraestrutura antes
+        que a mudança alcance o ambiente de destino.
+      </p>
+    </div>
+
+    <div>
+      <h3>Deployment</h3>
+      <p>
+        Etapas automatizadas tornam a implantação mais consistente e
+        reduzem diferenças causadas por procedimentos manuais.
+      </p>
+    </div>
+
+    <div>
+      <h3>Federated Authentication</h3>
+      <p>
+        Workload Identity Federation permite que pipelines autentiquem
+        no Azure utilizando identidades federadas, evitando credenciais
+        persistentes armazenadas como secrets.
+      </p>
+    </div>
+
+    <div>
+      <h3>Approvals & Controls</h3>
+      <p>
+        Revisões e controles podem ser adicionados aos pontos críticos
+        do fluxo para separar validação, aprovação e execução das mudanças.
+      </p>
+    </div>
+
+    <div>
+      <h3>Operational Automation</h3>
+      <p>
+        Além de deployments, automações podem apoiar atividades
+        operacionais recorrentes, reduzindo esforço manual e aumentando
+        a previsibilidade da plataforma.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-flow">
+
+    <span>Commit</span>
+    <span>→</span>
+    <span>Validation</span>
+    <span>→</span>
+    <span>Review</span>
+    <span>→</span>
+    <span>Approval</span>
+    <span>→</span>
+    <span>Deploy</span>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Automação com identidade, não com secrets</strong>
+
+    <p>
+      Sempre que possível, pipelines utilizam autenticação federada para
+      acessar recursos Azure. Dessa forma, o processo de CI/CD reduz a
+      dependência de credenciais de longa duração e se integra ao modelo
+      de identidade e segurança da plataforma.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 09 — GOVERNANCE & FINOPS -->
+
+<section class="article-section">
+
+  <p class="article-section-number">09</p>
+
+  <h2>Governance & FinOps</h2>
+
+  <p>
+    Conforme o ambiente Cloud cresce, decisões descentralizadas podem
+    aumentar rapidamente a complexidade operacional e financeira.
+    Governança passa a ser necessária para estabelecer padrões sem
+    impedir a evolução dos workloads.
+  </p>
+
+  <p>
+    A estratégia combina organização dos recursos, controle de acesso,
+    políticas, padronização e acompanhamento de custos, criando uma visão
+    mais consistente sobre como a plataforma é utilizada e evolui.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Management Groups</h3>
+      <p>
+        A organização hierárquica permite aplicar princípios de
+        governança sobre diferentes subscriptions e estabelecer
+        responsabilidades em níveis adequados da plataforma.
+      </p>
+    </div>
+
+    <div>
+      <h3>Subscriptions</h3>
+      <p>
+        A separação por subscriptions ajuda a estabelecer limites de
+        responsabilidade, acesso, custos e ciclo de vida dos ambientes.
+      </p>
+    </div>
+
+    <div>
+      <h3>RBAC</h3>
+      <p>
+        Permissões são associadas às responsabilidades necessárias,
+        reduzindo acessos excessivos e apoiando o princípio do menor
+        privilégio.
+      </p>
+    </div>
+
+    <div>
+      <h3>Policies & Standards</h3>
+      <p>
+        Políticas e padrões arquiteturais ajudam a reduzir configurações
+        inconsistentes e direcionam a criação de novos recursos.
+      </p>
+    </div>
+
+    <div>
+      <h3>Cost Visibility</h3>
+      <p>
+        Custos precisam ser analisados por contexto, serviço e padrão de
+        consumo para identificar oportunidades reais de otimização.
+      </p>
+    </div>
+
+    <div>
+      <h3>Continuous Optimization</h3>
+      <p>
+        Rightsizing, revisão de tiers, desligamento de recursos
+        desnecessários e análise de utilização fazem parte de um processo
+        contínuo de eficiência.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>FinOps não significa apenas reduzir custos</strong>
+
+    <p>
+      O objetivo é criar visibilidade suficiente para equilibrar custo,
+      desempenho, disponibilidade e necessidade do negócio. Uma redução
+      de custo que comprometa a operação não representa uma otimização
+      sustentável.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 10 — RESULTADOS -->
+
+<section class="article-section">
+
+  <p class="article-section-number">10</p>
+
+  <h2>Resultados</h2>
+
+  <p>
+    A consolidação desses princípios permitiu evoluir a plataforma de
+    forma mais estruturada, reduzindo decisões isoladas e criando uma
+    base comum para infraestrutura, Kubernetes, segurança, automação e
+    governança.
+  </p>
+
+  <p>
+    Mais do que a adoção de tecnologias específicas, o principal
+    resultado foi estabelecer padrões arquiteturais capazes de acompanhar
+    o crescimento dos workloads e das necessidades da organização.
+  </p>
+
+  <div class="article-result-grid">
+
+    <div>
+      <strong>Maior padronização</strong>
+      <span>
+        Padrões comuns para infraestrutura, identidade, conectividade
+        e automação reduzem diferenças entre implementações.
+      </span>
+    </div>
+
+    <div>
+      <strong>Segurança integrada</strong>
+      <span>
+        Identidade e autorização passam a fazer parte da arquitetura
+        dos workloads e dos processos de automação.
+      </span>
+    </div>
+
+    <div>
+      <strong>Infraestrutura reproduzível</strong>
+      <span>
+        Infrastructure as Code permite versionar, revisar e reproduzir
+        mudanças com maior previsibilidade.
+      </span>
+    </div>
+
+    <div>
+      <strong>Entregas mais consistentes</strong>
+      <span>
+        Pipelines e processos automatizados reduzem dependência de
+        atividades manuais durante mudanças e deployments.
+      </span>
+    </div>
+
+    <div>
+      <strong>Melhor governança</strong>
+      <span>
+        Organização, RBAC, políticas e padrões aumentam o controle sobre
+        a evolução do ambiente Cloud.
+      </span>
+    </div>
+
+    <div>
+      <strong>Maior visibilidade de custos</strong>
+      <span>
+        A análise contínua do consumo permite relacionar arquitetura,
+        utilização e custo nas decisões de otimização.
+      </span>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Resultado arquitetural</strong>
+
+    <p>
+      O maior ganho foi transformar diferentes componentes de Cloud em
+      uma plataforma integrada, na qual networking, identidade, AKS,
+      automação, governança e custos são tratados como partes do mesmo
+      sistema.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- 11 — LIÇÕES ARQUITETURAIS -->
+
+<section class="article-section">
+
+  <p class="article-section-number">11</p>
+
+  <h2>Lições arquiteturais</h2>
+
+  <p>
+    A evolução de uma plataforma Cloud enterprise mostra que decisões
+    técnicas dificilmente permanecem isoladas. Identidade, networking,
+    Kubernetes, automação e governança possuem dependências que precisam
+    ser consideradas desde o desenho inicial.
+  </p>
+
+  <div class="article-feature-grid">
+
+    <div>
+      <h3>Arquitetura antes da ferramenta</h3>
+      <p>
+        A escolha de um serviço ou tecnologia deve partir do problema
+        arquitetural que precisa ser resolvido, e não apenas da
+        disponibilidade da ferramenta.
+      </p>
+    </div>
+
+    <div>
+      <h3>Padronização reduz complexidade</h3>
+      <p>
+        Quanto mais o ambiente cresce, maior o valor de padrões
+        reutilizáveis para rede, identidade, infraestrutura e
+        automação.
+      </p>
+    </div>
+
+    <div>
+      <h3>Segurança precisa ser parte do fluxo</h3>
+      <p>
+        Identidade, RBAC, autenticação federada e proteção de dados
+        funcionam melhor quando são incorporados à arquitetura e aos
+        pipelines, e não adicionados posteriormente.
+      </p>
+    </div>
+
+    <div>
+      <h3>Kubernetes exige operação contínua</h3>
+      <p>
+        AKS reduz parte da complexidade do control plane, mas a
+        responsabilidade sobre workloads, capacidade, segurança,
+        observabilidade e ciclo de vida continua sendo essencial.
+      </p>
+    </div>
+
+    <div>
+      <h3>Automação precisa de governança</h3>
+      <p>
+        Automatizar sem padrões pode apenas acelerar a criação de
+        inconsistências. IaC e CI/CD precisam estar alinhados com
+        revisão, segurança e controles da plataforma.
+      </p>
+    </div>
+
+    <div>
+      <h3>Cloud é um processo contínuo</h3>
+      <p>
+        Arquitetura, custos, capacidade, segurança e operação precisam
+        ser revisitados continuamente conforme workloads e necessidades
+        do negócio evoluem.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="article-callout">
+
+    <strong>Principal aprendizado</strong>
+
+    <p>
+      Uma plataforma enterprise sustentável não depende de uma única
+      tecnologia. Ela nasce da integração entre arquitetura, pessoas,
+      processos, automação, segurança e governança.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <!-- CONCLUSÃO -->
+
+<section class="article-section">
+
+  <h2>Conclusão</h2>
+
+  <p>
+    Construir uma plataforma enterprise em Microsoft Azure e AKS exige
+    muito mais do que provisionar recursos ou operar Kubernetes.
+  </p>
+
+  <p>
+    O desafio está em integrar arquitetura, identidade, networking,
+    segurança, automação, governança e eficiência operacional em uma
+    plataforma capaz de evoluir de forma consistente.
+  </p>
+
+  <p>
+    Quando esses elementos são tratados como partes de um mesmo sistema,
+    a Cloud deixa de ser apenas infraestrutura e passa a funcionar como
+    uma plataforma de engenharia para suportar aplicações, dados e
+    transformação digital em escala.
+  </p>
+
+  <div class="article-callout">
+
+    <strong>Perspectiva</strong>
+
+    <p>
+      Arquitetura Cloud é um processo contínuo de decisões, evolução
+      e equilíbrio entre segurança, disponibilidade, velocidade,
+      governança e custo.
+    </p>
+
+  </div>
+
+</section>
+
+
+      <footer class="article-author">
+
+        <p class="article-author-label">Sobre o autor</p>
+
+        <h2>Leandro Martinelli</h2>
+
+        <p>
+          Especialista em Infraestrutura Cloud, com atuação em arquitetura,
+          Microsoft Azure, Kubernetes, automação, segurança e ambientes
+          corporativos.
+        </p>
+
+        <a href="../index.html#contato">
+          ← Voltar para contato
+        </a>
+
+      </footer>
+
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>
