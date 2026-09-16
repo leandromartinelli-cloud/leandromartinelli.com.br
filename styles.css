@@ -344,6 +344,14 @@ section > h2::after {
   line-height: 1.55;
 }
 
+#sobre {
+  padding-bottom: 40px;
+}
+
+#especialidades {
+  padding-top: 48px;
+}
+
 /* Expertise */
 
 #especialidades > div {
