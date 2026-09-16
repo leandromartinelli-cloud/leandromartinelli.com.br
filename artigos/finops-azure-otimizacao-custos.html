@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Cloud não reduz custo sozinho: FinOps no Azure | Leandro Martinelli</title>
+  
+    <meta
+      name="description"
+      content="FinOps no Azure na prática: rightsizing, recursos ociosos, autoscaling, Savings Plans, Reservations, budgets e governança para equilibrar custo e valor."
+    >
+  
+    <link
+      rel="canonical"
+      href="https://leandromartinelli.com.br/artigos/finops-azure-otimizacao-custos.html"
+    >
+  
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Leandro Martinelli">
+  
+    <meta
+      property="og:title"
+      content="Cloud não reduz custo sozinho: FinOps na prática em ambientes Azure"
+    >
+  
+    <meta
+      property="og:description"
+      content="Como aplicar FinOps no Azure para equilibrar custo, performance, confiabilidade e valor para o negócio."
+    >
+  
+    <meta
+      property="og:url"
+      content="https://leandromartinelli.com.br/artigos/finops-azure-otimizacao-custos.html"
+    >
+  
+    <meta
+      property="og:image"
+      content="https://leandromartinelli.com.br/assets/images/finops-azure-otimizacao-custos-og.jpg"
+    >
+  
+    <meta
+      property="og:image:alt"
+      content="Cloud não reduz custo sozinho: FinOps no Azure — Leandro Martinelli"
+    >
+  
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+  
+    <meta property="article:author" content="Leandro Martinelli">
+    <meta property="article:published_time" content="2026-09-16">
+    <meta property="article:section" content="Cloud Infrastructure">
+  
+    <meta property="article:tag" content="Microsoft Azure">
+    <meta property="article:tag" content="FinOps">
+    <meta property="article:tag" content="Cloud Cost Optimization">
+    <meta property="article:tag" content="Cloud Governance">
+  
+    <meta name="twitter:card" content="summary_large_image">
+  
+    <meta
+      name="twitter:image"
+      content="https://leandromartinelli.com.br/assets/images/finops-azure-otimizacao-custos-og.jpg"
+    >
+  
+    <meta
+      name="twitter:image:alt"
+      content="Cloud não reduz custo sozinho: FinOps no Azure — Leandro Martinelli"
+    >
+  
+    <meta
+      name="twitter:title"
+      content="Cloud não reduz custo sozinho: FinOps no Azure"
+    >
+  
+    <meta
+      name="twitter:description"
+      content="Rightsizing, recursos ociosos, autoscaling, Savings Plans, Reservations e governança: FinOps aplicado ao Azure."
+    >
+  
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Cloud não reduz custo sozinho: FinOps na prática em ambientes Azure",
+      "description": "Como aplicar FinOps no Microsoft Azure para equilibrar custo, performance, confiabilidade e valor para o negócio.",
+      "datePublished": "2026-09-16",
+      "dateModified": "2026-09-16",
+      "inLanguage": "pt-BR",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://leandromartinelli.com.br/artigos/finops-azure-otimizacao-custos.html"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Leandro Martinelli",
+        "url": "https://leandromartinelli.com.br/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Leandro Martinelli",
+        "url": "https://leandromartinelli.com.br/"
+      },
+      "about": [
+        "Microsoft Azure",
+        "FinOps",
+        "Cloud Cost Optimization",
+        "Cloud Governance"
+      ],
+      "keywords": [
+        "Microsoft Azure",
+        "FinOps",
+        "Azure Cost Management",
+        "Rightsizing",
+        "Azure Savings Plans",
+        "Azure Reservations",
+        "Cloud Governance"
+      ]
+    }
+    </script>
+  
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="article-page">
+
+    <article class="technical-article">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html#artigos">Artigos</a>
+        <span>/</span>
+        <span>FinOps & Azure</span>
+      </div>
+    
+      <header class="article-header">
+        <p class="article-category">Microsoft Azure • FinOps • Cloud Governance</p>
+    
+        <h1>Cloud não reduz custo sozinho: FinOps na prática em ambientes Azure</h1>
+    
+        <p class="article-lead">
+          Migrar workloads para Azure não significa automaticamente gastar menos.
+          Sem arquitetura, governança e uma disciplina contínua de FinOps, a Cloud
+          pode apenas transformar custos de infraestrutura em uma conta mensal
+          difícil de controlar.
+        </p>
+    
+        <div class="article-meta">
+          <span>Leandro Martinelli</span>
+          <span>•</span>
+          <span>Setembro de 2026</span>
+          <span>•</span>
+          <span>Cloud Infrastructure & FinOps</span>
+        </div>
+      </header>
+    
+      <section class="article-content">
+    
+        <h2>Cloud não é sinônimo de redução de custos</h2>
+    
+        <p>
+          Um dos erros mais comuns em iniciativas de migração para Cloud é assumir
+          que a mudança de datacenter para um provedor como Microsoft Azure produzirá,
+          por si só, redução de custos.
+        </p>
+    
+        <p>
+          A Cloud muda principalmente o modelo de consumo. Recursos podem ser
+          provisionados rapidamente, escalados conforme a demanda e cobrados de
+          acordo com diferentes métricas de utilização. Essa flexibilidade é uma
+          vantagem importante, mas também exige uma nova disciplina operacional.
+        </p>
+    
+        <p>
+          Uma máquina virtual superdimensionada, um disco sem utilização, um
+          snapshot esquecido ou uma arquitetura que mantém capacidade permanente
+          para atender apenas picos ocasionais continuam gerando custo.
+        </p>
+    
+        <div class="article-callout">
+          <strong>O ponto central</strong>
+          <p>
+            FinOps não é simplesmente cortar custos. É criar um processo contínuo
+            para equilibrar custo, performance, confiabilidade e valor para o negócio.
+          </p>
+        </div>
+    
+        <h2>1. Rightsizing: dimensionar com base no consumo real</h2>
+    
+        <p>
+          Rightsizing consiste em comparar a capacidade provisionada com a utilização
+          real do recurso. Em Azure, isso significa avaliar continuamente VMs,
+          bancos de dados, clusters, App Services e outros serviços para identificar
+          capacidade que não está sendo utilizada.
+        </p>
+    
+        <p>
+          Uma VM com oito vCPUs não deveria permanecer com esse dimensionamento
+          apenas porque foi criada dessa forma. Se métricas históricas demonstrarem
+          utilização consistentemente baixa, pode existir oportunidade para utilizar
+          uma SKU menor.
+        </p>
+    
+        <p>
+          Entretanto, a análise não deve considerar apenas CPU. Memória, IOPS,
+          throughput de rede, latência, crescimento esperado e criticidade da
+          aplicação precisam fazer parte da decisão.
+        </p>
+    
+        <div class="article-callout">
+          <strong>FinOps + Engenharia</strong>
+          <p>
+            Uma recomendação de economia só se transforma em uma boa decisão quando
+            o impacto técnico também é compreendido.
+          </p>
+        </div>
+    
+        <h2>2. Recursos ociosos: o custo que ninguém está utilizando</h2>
+    
+        <p>
+          Ambientes Cloud evoluem rapidamente. Projetos terminam, arquiteturas são
+          modificadas e recursos deixam de ser necessários. O problema é que nem
+          sempre esses recursos são removidos junto com a mudança.
+        </p>
+    
+        <p>Alguns exemplos recorrentes incluem:</p>
+    
+        <ul>
+          <li>discos gerenciados sem associação com máquinas virtuais;</li>
+          <li>endereços IP públicos que não estão sendo utilizados;</li>
+          <li>snapshots antigos sem política de retenção definida;</li>
+          <li>ambientes temporários que permaneceram ativos após o projeto;</li>
+          <li>recursos de laboratório ou desenvolvimento executando continuamente.</li>
+        </ul>
+    
+        <p>
+          Identificar esses recursos periodicamente é uma das formas mais simples
+          de eliminar desperdício sem comprometer a performance das aplicações.
+        </p>
+    
+        <h2>3. Escalabilidade: pagar pela capacidade quando ela é necessária</h2>
+    
+        <p>
+          Uma das principais vantagens da Cloud é a elasticidade. Mesmo assim,
+          é comum encontrar ambientes dimensionados permanentemente para suportar
+          o maior pico possível de utilização.
+        </p>
+    
+        <p>
+          Dependendo do workload, recursos como autoscaling, escalabilidade
+          horizontal e agendamento de ambientes podem permitir que a capacidade
+          acompanhe a demanda.
+        </p>
+    
+        <p>
+          Em ambientes de desenvolvimento e homologação, por exemplo, desligar
+          determinados recursos fora do horário de utilização pode representar
+          economia significativa sem alterar a experiência do negócio.
+        </p>
+    
+        <h2>4. Savings Plans e Reservations: compromisso precisa de previsibilidade</h2>
+    
+        <p>
+          Depois de entender o padrão de utilização, o próximo passo pode ser
+          avaliar modelos de compromisso de consumo.
+        </p>
+    
+        <p>
+          Azure Reservations e Azure Savings Plan for Compute podem reduzir o custo
+          de workloads previsíveis, mas não devem ser tratados como a primeira ação
+          de otimização.
+        </p>
+    
+        <p>
+          Antes de assumir um compromisso de longo prazo, é importante conhecer
+          quais recursos realmente permanecerão em utilização e qual é o comportamento
+          esperado da carga.
+        </p>
+    
+        <div class="article-callout">
+          <strong>Uma sequência mais segura</strong>
+          <p>
+            Primeiro entender e otimizar o consumo. Depois avaliar o compromisso
+            financeiro adequado ao workload.
+          </p>
+        </div>
+    
+        <h2>5. Governança: saber quem consome, quanto consome e por quê</h2>
+    
+        <p>
+          Otimização de custos sem governança tende a produzir resultados temporários.
+          Depois de uma iniciativa de redução, novos recursos são provisionados e o
+          ambiente volta a crescer.
+        </p>
+    
+        <p>
+          Tags, budgets, alertas, políticas e definição de ownership ajudam a
+          estabelecer responsabilidade sobre o consumo.
+        </p>
+    
+        <p>
+          Uma estratégia de tagging, por exemplo, pode permitir que custos sejam
+          associados a aplicações, produtos, áreas de negócio, ambientes ou centros
+          de custo.
+        </p>
+    
+        <p>
+          O objetivo deixa de ser apenas responder “quanto estamos gastando?” e
+          passa a incluir perguntas mais importantes:
+        </p>
+    
+        <ul>
+          <li>quem é responsável pelo recurso?</li>
+          <li>qual aplicação ou produto utiliza esse recurso?</li>
+          <li>qual valor ele entrega ao negócio?</li>
+          <li>o consumo atual está dentro do comportamento esperado?</li>
+          <li>existe oportunidade de otimização sem comprometer o serviço?</li>
+        </ul>
+    
+        <h2>6. Nem toda otimização significa gastar menos</h2>
+    
+        <p>
+          Este talvez seja o ponto mais importante de uma estratégia madura de
+          FinOps.
+        </p>
+    
+        <p>
+          Às vezes, a melhor decisão será reduzir capacidade ou eliminar um recurso.
+          Em outras situações, a decisão correta poderá ser manter ou até aumentar
+          o investimento.
+        </p>
+    
+        <p>
+          Se determinado recurso está garantindo disponibilidade, segurança,
+          performance ou capacidade necessária para uma aplicação crítica,
+          simplesmente reduzir seu custo pode gerar um impacto muito maior para
+          o negócio.
+        </p>
+    
+        <div class="article-callout">
+          <strong>Custo não deve ser analisado isoladamente</strong>
+          <p>
+            O objetivo é maximizar o valor obtido com o investimento em Cloud,
+            e não simplesmente produzir a menor fatura possível.
+          </p>
+        </div>
+    
+        <h2>7. FinOps como processo contínuo</h2>
+    
+        <p>
+          Um ambiente Cloud muda constantemente. Novos projetos surgem, aplicações
+          crescem, serviços são modernizados e padrões de consumo se alteram.
+          Por isso, FinOps não deveria ser tratado como um projeto executado uma
+          única vez.
+        </p>
+    
+        <p>Na prática, o ciclo pode ser resumido em três movimentos:</p>
+    
+        <div class="article-flow">
+          <span>Visibilidade</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Otimização</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Governança</span>
+        </div>
+    
+        <p>
+          A organização precisa primeiro entender o consumo, depois transformar
+          oportunidades em ações e, finalmente, criar mecanismos para manter a
+          disciplina ao longo do tempo.
+        </p>
+    
+        <h2>Checklist prático para ambientes Azure</h2>
+    
+        <p>
+          Uma avaliação inicial de FinOps pode começar com perguntas relativamente
+          simples:
+        </p>
+    
+        <ul>
+          <li>Existem VMs ou serviços consistentemente superdimensionados?</li>
+          <li>Há discos, IPs, snapshots ou outros recursos sem utilização?</li>
+          <li>Ambientes não produtivos precisam permanecer ativos 24x7?</li>
+          <li>Os workloads previsíveis já foram avaliados para Savings Plans ou Reservations?</li>
+          <li>Existem budgets e alertas configurados para os principais escopos?</li>
+          <li>Os recursos possuem tags suficientes para identificar aplicação e ownership?</li>
+          <li>As recomendações de otimização possuem responsáveis e acompanhamento?</li>
+          <li>O impacto em performance, segurança e disponibilidade é avaliado antes de cada redução?</li>
+        </ul>
+    
+        <h2>Conclusão</h2>
+    
+        <p>
+          Cloud oferece ferramentas poderosas para otimização, mas a tecnologia
+          sozinha não resolve o problema. A eficiência financeira depende da
+          combinação entre arquitetura, engenharia, governança e acompanhamento
+          contínuo do consumo.
+        </p>
+    
+        <p>
+          Rightsizing, eliminação de recursos ociosos, elasticidade, modelos de
+          compromisso e governança são mecanismos importantes, mas todos precisam
+          estar conectados ao contexto técnico e ao valor entregue pela aplicação.
+        </p>
+    
+        <p>
+          É essa mudança de visão que transforma otimização de custos em
+          engenharia financeira da Cloud.
+        </p>
+    
+      </section>
+    
+      <footer class="article-author">
+        <p class="article-author-label">Sobre o autor</p>
+    
+        <h2>Leandro Martinelli</h2>
+    
+        <p>
+          Especialista em Infraestrutura Cloud, com atuação em Microsoft Azure,
+          arquitetura de soluções, Kubernetes, automação, segurança, governança
+          e otimização de ambientes Cloud.
+        </p>
+    
+        <a href="../index.html#contato">Entrar em contato</a>
+      </footer>
+    
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>

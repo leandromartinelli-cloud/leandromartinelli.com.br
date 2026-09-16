@@ -2,13 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://leandromartinelli.com.br/</loc>
-    <lastmod>2026-09-13</lastmod>
+    <lastmod>2026-09-16</lastmod>
   </url>
 
   <url>
     <loc>https://leandromartinelli.com.br/artigos/aks-azure-rbac-vs-kubernetes-rbac.html</loc>
     <lastmod>2026-09-13</lastmod>
   </url>
+
+  <url>
+    <loc>https://leandromartinelli.com.br/artigos/finops-azure-otimizacao-custos.html</loc>
+    <lastmod>2026-09-16</lastmod>
+  </url>
+
   <url>
     <loc>https://leandromartinelli.com.br/cases/enterprise-azure-aks-platform.html</loc>
     <lastmod>2026-09-13</lastmod>
