@@ -121,7 +121,7 @@
 
       <section class="article-section">
 
-        <h2>01 — Contexto</h2>
+        <h2>01 · Contexto</h2>
 
         <p>
           Ambientes Kubernetes distribuídos entre múltiplos clusters
@@ -142,7 +142,7 @@
 
       <section class="article-section">
 
-        <h2>02 — Objetivo</h2>
+        <h2>02 · Objetivo</h2>
 
         <p>
           Demonstrar o ciclo completo de uma aplicação multi-cluster:
@@ -165,19 +165,24 @@
 
       <section class="article-section">
 
-        <h2>03 — Arquitetura</h2>
+        <h2>03 · Arquitetura</h2>
 
         <p>
           O ambiente utiliza um Karmada Control Plane responsável pelo
           gerenciamento de dois clusters Kubernetes registrados em Push Mode.
         </p>
 
-        <img
-          src="../assets/images/karmada-multicluster-architecture.png"
-          alt="Arquitetura Kubernetes Multi-Cluster utilizando Karmada"
-          loading="lazy"
-          style="width:100%;height:auto;border-radius:16px;margin-top:24px;"
-        >
+        <figure class="case-architecture-diagram">
+          <img
+            src="../assets/images/karmada-multicluster-architecture.png"
+            alt="Arquitetura Kubernetes Multi-Cluster utilizando Karmada"
+            loading="lazy"
+          >
+          <figcaption>
+            Arquitetura multi-cluster com Karmada demonstrando distribuição,
+            failover, recovery e rebalanceamento de workloads.
+          </figcaption>
+        </figure>
 
       </section>
 
@@ -186,7 +191,7 @@
 
       <section class="article-section">
 
-        <h2>04 — Distribuição Inicial</h2>
+        <h2>04 · Distribuição Inicial</h2>
 
         <p>
           A aplicação NGINX foi configurada com duas réplicas e uma
@@ -208,7 +213,7 @@ karmada-member2 replicas=1</code></pre>
 
       <section class="article-section">
 
-        <h2>05 — Cluster Failover</h2>
+        <h2>05 · Cluster Failover</h2>
 
         <p>
           A indisponibilidade do <strong>karmada-member2</strong> foi
@@ -234,7 +239,7 @@ karmada-member2 replicas=1</code></pre>
 
       <section class="article-section">
 
-        <h2>06 — Recovery & Rebalancing</h2>
+        <h2>06 · Recovery & Rebalancing</h2>
 
         <p>
           Após a recuperação do segundo cluster, ambos voltaram ao estado
@@ -262,7 +267,7 @@ karmada-member2 replicas=1</code></pre>
 
       <section class="article-section">
 
-        <h2>07 — Fluxo Validado</h2>
+        <h2>07 · Fluxo Validado</h2>
 
         <pre><code>Normal Operation
        |
@@ -293,7 +298,7 @@ member1 = 1    member2 = 1</code></pre>
 
       <section class="article-section">
 
-        <h2>08 — Resultados</h2>
+        <h2>08 · Resultados</h2>
 
         <ul>
           <li>Orquestração Kubernetes multi-cluster.</li>
@@ -313,7 +318,7 @@ member1 = 1    member2 = 1</code></pre>
 
       <section class="article-section">
 
-        <h2>09 — Tecnologias</h2>
+        <h2>09 · Tecnologias</h2>
 
         <div class="article-meta">
           <span>Kubernetes v1.37</span>
@@ -334,7 +339,7 @@ member1 = 1    member2 = 1</code></pre>
 
       <section class="article-section">
 
-        <h2>10 — Projeto no GitHub</h2>
+        <h2>10 · Projeto no GitHub</h2>
 
         <p>
           Os manifests, documentação do teste de failover e arquitetura
@@ -366,3 +371,5 @@ member1 = 1    member2 = 1</code></pre>
 
 </body>
 </html>
+
+
