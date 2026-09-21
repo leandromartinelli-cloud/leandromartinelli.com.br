@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Karmada Multi-Cluster Kubernetes | Leandro Martinelli</title>
+
+  <meta
+    name="description"
+    content="Case study prático sobre Kubernetes multi-cluster com Karmada, demonstrando distribuição de workloads, failover, recuperação e workload rebalancing."
+  >
+
+  <link
+    rel="canonical"
+    href="https://leandromartinelli.com.br/cases/karmada-multicluster.html"
+  >
+
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Leandro Martinelli">
+
+  <meta
+    property="og:title"
+    content="Karmada Multi-Cluster Kubernetes | Leandro Martinelli"
+  >
+
+  <meta
+    property="og:description"
+    content="Laboratório prático de Kubernetes multi-cluster com scheduling, failover, recovery e workload rebalancing utilizando Karmada."
+  >
+
+  <meta
+    property="og:url"
+    content="https://leandromartinelli.com.br/cases/karmada-multicluster.html"
+  >
+
+  <meta
+    property="og:image"
+    content="https://leandromartinelli.com.br/assets/images/karmada-multicluster-architecture.png"
+  >
+
+  <meta
+    property="og:image:alt"
+    content="Arquitetura Kubernetes Multi-Cluster com Karmada"
+  >
+
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta
+    name="twitter:title"
+    content="Karmada Multi-Cluster Kubernetes | Leandro Martinelli"
+  >
+
+  <meta
+    name="twitter:description"
+    content="Kubernetes multi-cluster com scheduling, failover, recovery e workload rebalancing utilizando Karmada."
+  >
+
+  <meta
+    name="twitter:image"
+    content="https://leandromartinelli.com.br/assets/images/karmada-multicluster-architecture.png"
+  >
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <article class="article-page case-page">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html#projetos">← Voltar para projetos</a>
+      </div>
+
+      <header class="article-header">
+
+        <p class="article-eyebrow">
+          CASE STUDY • KUBERNETES • MULTI-CLUSTER
+        </p>
+
+        <h1>
+          Kubernetes Multi-Cluster com Karmada:
+          Failover, Recovery e Workload Rebalancing
+        </h1>
+
+        <p class="article-subtitle">
+          Laboratório prático para validar distribuição de workloads,
+          resiliência entre clusters Kubernetes e recuperação de aplicações
+          utilizando Karmada.
+        </p>
+
+        <div class="article-meta">
+          <span>Kubernetes</span>
+          <span>Karmada</span>
+          <span>Multi-Cluster</span>
+          <span>High Availability</span>
+          <span>Cloud Native</span>
+        </div>
+
+      </header>
+
+
+      <!-- 01 — CONTEXTO -->
+
+      <section class="article-section">
+
+        <h2>01 — Contexto</h2>
+
+        <p>
+          Ambientes Kubernetes distribuídos entre múltiplos clusters
+          introduzem desafios relacionados a scheduling, disponibilidade,
+          recuperação de falhas e redistribuição de workloads.
+        </p>
+
+        <p>
+          Este laboratório foi criado para validar, de forma prática,
+          o comportamento do Karmada na administração centralizada de
+          workloads executados em dois clusters Kubernetes independentes.
+        </p>
+
+      </section>
+
+
+      <!-- 02 — OBJETIVO -->
+
+      <section class="article-section">
+
+        <h2>02 — Objetivo</h2>
+
+        <p>
+          Demonstrar o ciclo completo de uma aplicação multi-cluster:
+          distribuição inicial, indisponibilidade de um cluster,
+          failover para o cluster saudável, recuperação e posterior
+          rebalanceamento das réplicas.
+        </p>
+
+        <div class="article-meta">
+          <span>Scheduling</span>
+          <span>Failover</span>
+          <span>Recovery</span>
+          <span>Rebalancing</span>
+        </div>
+
+      </section>
+
+
+      <!-- 03 — ARQUITETURA -->
+
+      <section class="article-section">
+
+        <h2>03 — Arquitetura</h2>
+
+        <p>
+          O ambiente utiliza um Karmada Control Plane responsável pelo
+          gerenciamento de dois clusters Kubernetes registrados em Push Mode.
+        </p>
+
+        <img
+          src="../assets/images/karmada-multicluster-architecture.png"
+          alt="Arquitetura Kubernetes Multi-Cluster utilizando Karmada"
+          loading="lazy"
+          style="width:100%;height:auto;border-radius:16px;margin-top:24px;"
+        >
+
+      </section>
+
+
+      <!-- 04 — ESTADO INICIAL -->
+
+      <section class="article-section">
+
+        <h2>04 — Distribuição Inicial</h2>
+
+        <p>
+          A aplicação NGINX foi configurada com duas réplicas e uma
+          PropagationPolicy utilizando weighted replica scheduling.
+        </p>
+
+        <pre><code>karmada-member1 replicas=1
+karmada-member2 replicas=1</code></pre>
+
+        <p>
+          Dessa forma, cada cluster mantinha uma réplica da aplicação
+          durante a operação normal.
+        </p>
+
+      </section>
+
+
+      <!-- 05 — FAILOVER -->
+
+      <section class="article-section">
+
+        <h2>05 — Cluster Failover</h2>
+
+        <p>
+          A indisponibilidade do <strong>karmada-member2</strong> foi
+          simulada para validar o comportamento de failover.
+        </p>
+
+        <p>
+          Após detectar a falha, o Karmada recalculou o ResourceBinding
+          e direcionou as duas réplicas para o cluster saudável.
+        </p>
+
+        <pre><code>karmada-member1 replicas=2</code></pre>
+
+        <p>
+          A quantidade desejada de réplicas foi preservada mesmo com
+          um dos clusters indisponível.
+        </p>
+
+      </section>
+
+
+      <!-- 06 — RECOVERY -->
+
+      <section class="article-section">
+
+        <h2>06 — Recovery & Rebalancing</h2>
+
+        <p>
+          Após a recuperação do segundo cluster, ambos voltaram ao estado
+          saudável. A recuperação do cluster, entretanto, não implica
+          automaticamente a restauração da distribuição original.
+        </p>
+
+        <p>
+          Um <strong>WorkloadRebalancer</strong> foi utilizado para solicitar
+          um novo scheduling do workload.
+        </p>
+
+        <pre><code>karmada-member1 replicas=1
+karmada-member2 replicas=1</code></pre>
+
+        <p>
+          O ambiente retornou à distribuição inicial, com uma réplica
+          saudável em cada cluster.
+        </p>
+
+      </section>
+
+
+      <!-- 07 — FLUXO -->
+
+      <section class="article-section">
+
+        <h2>07 — Fluxo Validado</h2>
+
+        <pre><code>Normal Operation
+       |
+       v
+member1 = 1    member2 = 1
+       |
+       | member2 failure
+       v
+Karmada detects failure
+       |
+       v
+ResourceBinding recalculated
+       |
+       v
+member1 = 2
+       |
+       | member2 recovery
+       v
+WorkloadRebalancer
+       |
+       v
+member1 = 1    member2 = 1</code></pre>
+
+      </section>
+
+
+      <!-- 08 — RESULTADOS -->
+
+      <section class="article-section">
+
+        <h2>08 — Resultados</h2>
+
+        <ul>
+          <li>Orquestração Kubernetes multi-cluster.</li>
+          <li>Distribuição ponderada de réplicas.</li>
+          <li>Monitoramento da saúde dos clusters.</li>
+          <li>Failover automático do workload.</li>
+          <li>Preservação da quantidade desejada de réplicas.</li>
+          <li>Recuperação do member cluster.</li>
+          <li>Workload rebalancing após recovery.</li>
+          <li>Validação do ResourceBinding do Karmada.</li>
+        </ul>
+
+      </section>
+
+
+      <!-- 09 — TECNOLOGIAS -->
+
+      <section class="article-section">
+
+        <h2>09 — Tecnologias</h2>
+
+        <div class="article-meta">
+          <span>Kubernetes v1.37</span>
+          <span>Karmada v1.19</span>
+          <span>Docker</span>
+          <span>Kind</span>
+          <span>NGINX</span>
+          <span>kubectl</span>
+          <span>karmadactl</span>
+          <span>PowerShell</span>
+          <span>WSL2</span>
+        </div>
+
+      </section>
+
+
+      <!-- 10 — CÓDIGO -->
+
+      <section class="article-section">
+
+        <h2>10 — Projeto no GitHub</h2>
+
+        <p>
+          Os manifests, documentação do teste de failover e arquitetura
+          utilizada neste laboratório estão disponíveis publicamente no GitHub.
+        </p>
+
+        <p>
+          <a
+            class="button button-primary"
+            href="https://github.com/leandromartinelli-cloud/karmada-multicluster-lab"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Explorar Karmada Multi-Cluster Lab →
+          </a>
+        </p>
+
+      </section>
+
+    </article>
+
+  </main>
+
+  <footer>
+    <p>
+      © Leandro Martinelli — Cloud Infrastructure • Azure • Kubernetes • DevOps
+    </p>
+  </footer>
+
+</body>
+</html>

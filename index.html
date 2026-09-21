@@ -488,9 +488,94 @@
           </div>
         </div>
       </article>
+
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Kubernetes • Karmada • Multi-Cluster • High Availability
+          </p>
+
+          <h3>Karmada Multi-Cluster Kubernetes</h3>
+
+          <p class="project-description">
+            Laboratório prático de orquestração Kubernetes multi-cluster,
+            desenvolvido para validar distribuição de workloads, failover
+            automático, recuperação de clusters e workload rebalancing
+            utilizando Karmada.
+          </p>
+
+          <div class="project-highlights">
+            <div>
+              <strong>Multi-Cluster</strong>
+              <span>
+                Distribuição ponderada de réplicas entre dois clusters
+                Kubernetes gerenciados centralmente pelo Karmada.
+              </span>
+            </div>
+
+            <div>
+              <strong>Automatic Failover</strong>
+              <span>
+                Detecção da indisponibilidade de um member cluster e
+                redistribuição das réplicas para o cluster saudável.
+              </span>
+            </div>
+
+            <div>
+              <strong>Recovery & Rebalancing</strong>
+              <span>
+                Recuperação do cluster e restauração da distribuição
+                original utilizando WorkloadRebalancer.
+              </span>
+            </div>
+          </div>
+
+          <a
+            class="project-link"
+            href="cases/karmada-multicluster.html"
+          >
+            Ver Case Study →
+          </a>
+        </div>
+
+        <div
+          class="project-architecture"
+          aria-label="Arquitetura Kubernetes Multi-Cluster com Karmada"
+        >
+          <span class="architecture-label">MULTI-CLUSTER</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>Karmada</strong>
+              <span>Control Plane</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Member 1</strong>
+              <span>1 Replica</span>
+            </div>
+
+            <span class="architecture-arrow">↔</span>
+
+            <div class="architecture-node">
+              <strong>Failover</strong>
+              <span>2 Replicas</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>Rebalance</strong>
+              <span>1 + 1</span>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
 
-        <section id="artigos">
+    <section id="artigos">
       <div class="content-header">
         <div>
           <p class="content-eyebrow">CONHECIMENTO COMPARTILHADO</p>
@@ -666,3 +751,4 @@
 
 </body>
 </html>
+
