@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AKS privado, ACR e Private Link: o que quebra primeiro | Leandro Martinelli</title>
+
+  <meta
+    name="description"
+    content="O que realmente quebra quando o AKS e o ACR saem da internet: DNS de Private Link, pull de imagem, kubectl, Firewall e o hábito de tratar cluster privado como um checkbox."
+  >
+
+  <link
+    rel="canonical"
+    href="https://leandromartinelli.com.br/artigos/aks-privado-acr-private-link.html"
+  >
+
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Leandro Martinelli">
+  <meta property="og:title" content="AKS privado, ACR e Private Link: o que quebra primeiro">
+  <meta
+    property="og:description"
+    content="Cluster privado não é um checkbox. DNS, pull de imagem, kubectl e saída para o Azure costumam falhar antes da API ficar realmente isolada."
+  >
+  <meta
+    property="og:url"
+    content="https://leandromartinelli.com.br/artigos/aks-privado-acr-private-link.html"
+  >
+
+  <meta property="article:author" content="Leandro Martinelli">
+  <meta property="article:published_time" content="2026-09-29">
+  <meta property="article:section" content="Cloud Infrastructure">
+  <meta property="article:tag" content="Microsoft Azure">
+  <meta property="article:tag" content="AKS">
+  <meta property="article:tag" content="Azure Container Registry">
+  <meta property="article:tag" content="Private Link">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AKS privado, ACR e Private Link: o que quebra primeiro">
+  <meta
+    name="twitter:description"
+    content="DNS, pull de imagem, kubectl e Firewall: onde um AKS privado realmente falha em produção."
+  >
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="article-page">
+
+    <article class="technical-article">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html#artigos">Artigos</a>
+        <span>/</span>
+        <span>Kubernetes &amp; Azure</span>
+      </div>
+
+      <header class="article-header">
+        <p class="article-category">Kubernetes • Azure • Networking</p>
+
+        <h1>AKS privado, ACR e Private Link: o que quebra primeiro</h1>
+
+        <p class="article-lead">
+          Ligar cluster privado no AKS não isola a plataforma. O que costuma
+          cair primeiro é o caminho operacional: DNS do Private Link, pull
+          de imagem no ACR, kubectl fora da VNet e a saída dos nodes para
+          os serviços do Azure.
+        </p>
+
+        <div class="article-meta">
+          <span>Leandro Martinelli</span>
+          <span>•</span>
+          <span>Setembro de 2026</span>
+          <span>•</span>
+          <span>Cloud Infrastructure &amp; Architecture</span>
+        </div>
+      </header>
+
+      <section class="article-content">
+
+        <h2>O erro não é deixar a API pública. É achar que privado é um toggle</h2>
+
+        <p>
+          Em muitos projetos, “AKS privado” entra no checklist de segurança
+          junto com “ACR sem acesso público”. O desenho parece simples: API
+          só na VNet, registry só via Private Endpoint, fim da exposição
+          na internet.
+        </p>
+
+        <p>
+          Em produção, o cluster continua dependendo de identidade, DNS,
+          roteamento e de um caminho humano para operar. Quando qualquer
+          um desses pedaços fica incompleto, o sintoma não é “API exposta”.
+          É deploy parado, node que não sobe, <code>ImagePullBackOff</code>
+          e time de plataforma trancado fora do cluster.
+        </p>
+
+        <div class="article-callout">
+          Cluster privado reduz a superfície da API Kubernetes na internet.
+          Ele não substitui Private DNS, identidade do kubelet, Firewall
+          de saída nem um salto operacional (VPN, ExpressRoute ou jump box).
+        </div>
+
+        <h2>O que realmente muda no AKS privado</h2>
+
+        <p>
+          Com API server privado, o endpoint do Kubernetes deixa de ter um
+          endereço público utilizável. O plano de controle continua sendo
+          gerenciado pela Microsoft; o que muda é o caminho até ele.
+        </p>
+
+        <p>
+          Os nodes falam com a API por um Private Endpoint gerenciado.
+          Quem está fora da VNet (laptop, pipeline em outra rede, agente
+          self-hosted mal posicionado) simplesmente não resolve ou não
+          roteia até esse IP.
+        </p>
+
+        <div class="article-flow">
+          <span>Operador / pipeline</span>
+          <span class="article-flow-arrow">→</span>
+          <span>VPN / hub / jump</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Private DNS</span>
+          <span class="article-flow-arrow">→</span>
+          <span>API privada do AKS</span>
+        </div>
+
+        <p>
+          Authorized IP ranges em cluster público resolvem outro problema:
+          restringir origem na internet. Misturar os dois modelos sem
+          intenção clara é comum e gera a ilusão de que a API “já está
+          privada” quando ainda responde na borda pública.
+        </p>
+
+        <h2>ACR: o pull de imagem quebra antes da teoria de Zero Trust</h2>
+
+        <p>
+          O segundo toggle é desligar o acesso público do Azure Container
+          Registry. Sem Private Endpoint (ou sem um caminho equivalente),
+          o kubelet não baixa imagem. Com Private Endpoint mal DNS-ado,
+          o nome público do ACR continua resolvendo para IP público. Ou,
+          pior, resolve de um jeito no hub e de outro no on-premises.
+        </p>
+
+        <p>
+          O nome que o cluster usa continua sendo o FQDN do registry
+          (<code>meuregistro.azurecr.io</code>). Private Link não inventa
+          um hostname paralelo para a aplicação. Ele exige que a zona
+          <code>privatelink.azurecr.io</code> (e o registro A correto)
+          esteja ligada às VNets que precisam resolver o IP privado.
+        </p>
+
+        <div class="article-flow">
+          <span>Kubelet (MSI)</span>
+          <span class="article-flow-arrow">→</span>
+          <span>FQDN do ACR</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Private DNS</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Private Endpoint</span>
+        </div>
+
+        <p>
+          Identidade é a outra metade. Nodes precisam de permissão para
+          pull (AcrPull na identidade do kubelet). Private Link sem RBAC
+          no registry também falha, só que a mensagem parece “rede”.
+          RBAC sem DNS também falha, e aí a mensagem parece “autenticação”.
+        </p>
+
+        <h2>O que quebra primeiro (ordem que eu vejo no campo)</h2>
+
+        <ol>
+          <li>
+            <strong>kubectl do laptop.</strong> Cluster privado sem VPN,
+            ExpressRoute ou jump box. O portal até mostra o recurso; o
+            <code>kubeconfig</code> aponta para um FQDN que não resolve
+            na rede do analista.
+          </li>
+          <li>
+            <strong>DNS split-brain no ACR.</strong> Zona privada criada
+            só na spoke, não ligada ao hub. Pipeline no hub resolve IP
+            público; node na spoke resolve privado. Ou o contrário.
+          </li>
+          <li>
+            <strong>Saída dos nodes.</strong> UDR para Azure Firewall
+            sem as FQDNs que o AKS ainda precisa na internet ou via
+            serviço. Node pool não sobe, extensão não instala, pull
+            de imagens da Microsoft falha.
+          </li>
+          <li>
+            <strong>Pipeline na nuvem errada.</strong> Microsoft-hosted
+            agent tentando falar com API privada. O job “funcionava”
+            no cluster público e morre no privado sem um agent na VNet.
+          </li>
+          <li>
+            <strong>Private Endpoint de ACR em outra subscription</strong>
+            sem o DNS e o approval corretos. O diagrama no PowerPoint
+            está certo; o registro A não.
+          </li>
+        </ol>
+
+        <h2>Critérios de decisão: não copie o lab de tutorial</h2>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <span>API privada</span>
+
+            <h3>Faz sentido quando:</h3>
+
+            <ul>
+              <li>já existe hub-spoke, VPN ou ExpressRoute de verdade;</li>
+              <li>existe jump box ou agent de CI dentro da rede;</li>
+              <li>o risco de API Kubernetes na internet é inaceitável;</li>
+              <li>Private DNS é operado como plataforma, não como afterthought.</li>
+            </ul>
+          </div>
+
+          <div class="article-decision-card">
+            <span>API pública restrita</span>
+
+            <h3>Ainda é válida quando:</h3>
+
+            <ul>
+              <li>o time opera sem rede corporativa estável;</li>
+              <li>o pipeline ainda é Microsoft-hosted e não há agent interno;</li>
+              <li>authorized IPs + Entra + RBAC cobrem o risco atual;</li>
+              <li>privado viraria um lockout operacional, não um controle.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <p>
+          ACR 100% privado segue a mesma lógica. Se o único consumidor é
+          o AKS na VNet, feche o public network access e trate DNS como
+          contrato de plataforma. Se ainda existem builds em SaaS, scanners
+          ou parceiros puxando tag pela internet, “registry privado” vira
+          exceção mal documentada, ou um firewall de IP que ninguém
+          revisa.
+        </p>
+
+        <h2>Arquitetura mínima que dá para reproduzir</h2>
+
+        <p>
+          Não é um tutorial de clique. É o recorte que eu esperaria ver
+          num desenho de landing zone antes de marcar o cluster como
+          privado:
+        </p>
+
+        <ul>
+          <li>Hub com resolução DNS central (Private DNS Zones ligadas ao hub, não espalhadas só na spoke).</li>
+          <li>Spoke do AKS: subnet de nodes, subnet de Private Endpoints, UDR consistente com o Firewall.</li>
+          <li>Zonas relevantes no hub: AKS (<code>privatelink.&lt;region&gt;.azmk8s.io</code> no modelo atual) e ACR (<code>privatelink.azurecr.io</code>).</li>
+          <li>ACR com Private Endpoint na spoke (ou no hub, se essa for a norma de PE da empresa) e AcrPull na identidade do kubelet.</li>
+          <li>Caminho operacional explícito: VPN, ExpressRoute ou jump box com <code>kubectl</code> e, no Azure DevOps/GitHub, agent na VNet.</li>
+        </ul>
+
+        <div class="article-flow">
+          <span>Hub DNS + Firewall</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Spoke AKS</span>
+          <span class="article-flow-arrow">→</span>
+          <span>PE ACR</span>
+          <span class="article-flow-arrow">→</span>
+          <span>Imagem no node</span>
+        </div>
+
+        <p>
+          O laboratório público
+          <a href="https://github.com/leandromartinelli-cloud/azure-aks-lab" target="_blank" rel="noopener noreferrer">azure-aks-lab</a>
+          cobre o caminho Terraform → ACR → AKS. Cluster privado e PE de
+          ACR são a evolução natural desse lab, não um desenho paralelo.
+        </p>
+
+        <h2>Consequências operacionais</h2>
+
+        <p>
+          <strong>Segurança.</strong>           API fora da internet reduz uma classe
+          de ataque. Não reduz Secret mal guardado, RBAC largo nem imagem
+          vulnerável. Private Link no ACR reduz exfiltração por pull
+          anônimo; não substitui scan nem imutabilidade de tag.
+        </p>
+
+        <p>
+          <strong>Custo.</strong> Private Endpoint, Firewall, jump box e
+          DNS privado não são “grátis no Terraform”. Cluster privado com
+          Firewall inspecionando tudo aumenta SKU e complexidade. O cluster
+          que “ficou mais seguro” no board às vezes ficou mais caro e mais
+          frágil no DNS.
+        </p>
+
+        <p>
+          <strong>Raio de explosão.</strong> Um Private DNS Zone desligado
+          da VNet errada derruba pull de imagem em todos os namespaces.
+          Um UDR errado derruba node bootstrap. Falha de rede de plataforma
+          parece falha de aplicação, e o on-call da app leva o chamado.
+        </p>
+
+        <h2>O que não fazer</h2>
+
+        <ul>
+          <li>Marcar AKS privado sem definir quem vai rodar <code>kubectl</code> no dia seguinte.</li>
+          <li>Criar Private Endpoint de ACR e esquecer a zona <code>privatelink.azurecr.io</code> no hub.</li>
+          <li>Desligar public access do ACR enquanto o pipeline ainda resolve o registry pela internet.</li>
+          <li>Tratar Service Endpoint e Private Endpoint como equivalentes. Não são. O modelo de DNS e o controle de exposição são diferentes.</li>
+          <li>Assumir que Azure Monitor, Policy e add-ons “continuam iguais” sem revisar saída e FQDNs.</li>
+          <li>Usar cluster privado como substituto de Entra ID, Azure RBAC e menor privilégio. Isolamento de API não é autorização. Isso já foi o assunto do artigo sobre <a href="aks-azure-rbac-vs-kubernetes-rbac.html">Azure RBAC vs Kubernetes RBAC</a>.</li>
+        </ul>
+
+        <h2>Recomendação</h2>
+
+        <p>
+          Se a organização já opera hub-spoke e identidade no Entra, API
+          privada + ACR privado é o alvo certo, desde que DNS e o caminho
+          de operação entrem no mesmo pull request que o flag
+          <code>private_cluster_enabled</code>.
+        </p>
+
+        <p>
+          Se a organização ainda acessa Azure pelo laptop na internet e
+          o CI é hosted, feche o que for possível (authorized IPs, disable
+          local accounts, RBAC) e planeje o salto de rede. Ligar privado
+          no meio do caminho só troca um risco conhecido por um incidente
+          de disponibilidade.
+        </p>
+
+        <h2>Conclusão</h2>
+
+        <p>
+          AKS privado e ACR via Private Link são decisões de plataforma,
+          não de checkbox no recurso. O que quebra primeiro quase nunca é
+          “a API ainda pública”. É DNS, pull, pipeline e a pessoa que
+          precisava entrar no cluster às 2h da manhã.
+        </p>
+
+        <p>
+          Desenhe o caminho até a API e o caminho até a imagem com o mesmo
+          rigor que você desenha o node pool. O resto da série (Workload
+          Identity, Policy, FinOps do cluster) só funciona se esse
+          caminho existir de verdade.
+        </p>
+
+      </section>
+
+      <footer class="article-author">
+        <p class="article-author-label">Sobre o autor</p>
+
+        <h2>Leandro Martinelli</h2>
+
+        <p>
+          Especialista em Infraestrutura Cloud com atuação em arquitetura,
+          automação, Kubernetes, Microsoft Azure, segurança, DevOps e
+          modernização de ambientes corporativos.
+        </p>
+
+        <a href="../index.html#artigos">← Voltar para Artigos</a>
+      </footer>
+
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>

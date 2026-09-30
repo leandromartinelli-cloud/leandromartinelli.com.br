@@ -1306,7 +1306,7 @@ footer {
 
 .article-author p:not(.article-author-label) {
   max-width: 700px;
-  margin-bottom: 18px;
+  margin: 0 auto 18px;
   color: var(--text-secondary);
 }
 
@@ -1591,6 +1591,7 @@ footer {
 
 .case-page .article-author p {
   max-width: 700px;
+  margin-inline: auto;
   color: var(--text-secondary);
 }
 
