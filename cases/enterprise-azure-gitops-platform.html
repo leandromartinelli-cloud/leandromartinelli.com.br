@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Enterprise Azure GitOps Platform | Leandro Martinelli</title>
+
+  <meta
+    name="description"
+    content="Case study de uma plataforma GitOps enterprise no Microsoft Azure com Private AKS, Terraform, GitHub Actions, Argo CD, Workload Identity e arquitetura private-by-design."
+  >
+
+  <link
+    rel="canonical"
+    href="https://leandromartinelli.com.br/cases/enterprise-azure-gitops-platform.html"
+  >
+
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Leandro Martinelli">
+  <meta property="og:title" content="Enterprise Azure GitOps Platform | Leandro Martinelli">
+  <meta
+    property="og:description"
+    content="Private AKS, Terraform, GitHub Actions, Argo CD, Managed Identity, Workload Identity e validação end-to-end em uma plataforma Azure orientada a GitOps."
+  >
+  <meta
+    property="og:url"
+    content="https://leandromartinelli.com.br/cases/enterprise-azure-gitops-platform.html"
+  >
+  <meta
+    property="og:image"
+    content="https://leandromartinelli.com.br/assets/images/enterprise-azure-gitops-platform-architecture.png"
+  >
+  <meta
+    property="og:image:alt"
+    content="Arquitetura da Enterprise Azure GitOps Platform"
+  >
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Enterprise Azure GitOps Platform | Leandro Martinelli">
+  <meta
+    name="twitter:description"
+    content="Plataforma Azure private-by-design utilizando Terraform, AKS, GitHub Actions, Argo CD e GitOps."
+  >
+  <meta
+    name="twitter:image"
+    content="https://leandromartinelli.com.br/assets/images/enterprise-azure-gitops-platform-architecture.png"
+  >
+
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <article class="article-page case-page">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html#projetos">← Voltar para projetos</a>
+      </div>
+
+      <header class="article-header">
+
+        <p class="article-eyebrow">
+          CASE STUDY • AZURE • PLATFORM ENGINEERING • GITOPS
+        </p>
+
+        <h1>
+          Enterprise Azure GitOps Platform:
+          Private AKS, Terraform e GitOps
+        </h1>
+
+        <p class="article-subtitle">
+          Implementação de uma plataforma Kubernetes enterprise no Microsoft Azure
+          combinando infraestrutura privada, Infrastructure as Code, CI/CD,
+          identidade baseada em Azure e entrega contínua utilizando GitOps.
+        </p>
+
+        <div class="article-meta">
+          <span>Microsoft Azure</span>
+          <span>AKS</span>
+          <span>Terraform</span>
+          <span>GitHub Actions</span>
+          <span>Argo CD</span>
+          <span>GitOps</span>
+        </div>
+
+      </header>
+
+      <!-- 01 — CONTEXTO -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">01</p>
+        <h2>Contexto</h2>
+
+        <p>
+          Plataformas Kubernetes corporativas precisam ir além do simples
+          provisionamento de um cluster. Networking privado, identidade,
+          segurança, automação, CI/CD, observabilidade e controle de mudanças
+          precisam funcionar como partes integradas da plataforma.
+        </p>
+
+        <p>
+          O Enterprise Azure GitOps Platform foi desenvolvido para reproduzir
+          esse cenário utilizando práticas de Platform Engineering e uma
+          arquitetura inspirada em ambientes enterprise no Microsoft Azure.
+        </p>
+
+        <div class="article-callout">
+          <strong>Desafio</strong>
+          <p>
+            Construir uma plataforma Azure reproduzível e private-by-design,
+            eliminando dependência de credenciais persistentes e separando
+            claramente Continuous Integration de Continuous Delivery.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 02 — OBJETIVO -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">02</p>
+        <h2>Objetivo</h2>
+
+        <p>
+          Demonstrar um fluxo completo entre desenvolvimento, provisionamento
+          de infraestrutura, construção de aplicações e reconciliação GitOps
+          em um Azure Kubernetes Service privado.
+        </p>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <h3>Private by Design</h3>
+            <p>
+              AKS privado, ACR e Key Vault utilizando conectividade privada
+              e integração com Private DNS.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Infrastructure as Code</h3>
+            <p>
+              Terraform modular responsável pelo provisionamento e gerenciamento
+              da infraestrutura Azure.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Identity First</h3>
+            <p>
+              Managed Identity, Workload Identity, Microsoft Entra ID e Azure
+              RBAC reduzindo a utilização de credenciais persistentes.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>GitOps</h3>
+            <p>
+              Git como source of truth e Argo CD responsável pela reconciliação
+              do estado das aplicações no Kubernetes.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 03 — ARQUITETURA -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">03</p>
+        <h2>Arquitetura</h2>
+
+        <p>
+          A arquitetura conecta GitHub, automação de CI e recursos privados
+          dentro do Azure. Um self-hosted GitHub Actions runner executado
+          dentro da Virtual Network fornece o caminho de automação necessário
+          para operar recursos que não são expostos publicamente.
+        </p>
+
+        <figure class="case-architecture-diagram">
+          <img
+            src="../assets/images/enterprise-azure-gitops-platform-architecture.png"
+            alt="Arquitetura da Enterprise Azure GitOps Platform"
+            loading="lazy"
+          >
+          <figcaption>
+            Arquitetura da plataforma integrando GitHub Actions, Microsoft Entra ID,
+            self-hosted runner, Private AKS, ACR, Key Vault, Argo CD e observabilidade.
+          </figcaption>
+        </figure>
+
+        <div class="article-callout">
+          <strong>Ambiente v1.0.0</strong>
+          <p>
+            A primeira versão estável implementa e valida um ambiente DEV
+            completo. HML e PROD permanecem como evolução planejada da
+            arquitetura e não fazem parte do escopo implementado na v1.0.0.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 04 — AZURE FOUNDATION -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">04</p>
+        <h2>Azure Foundation</h2>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Private AKS</h3>
+            <p>
+              Kubernetes API privado, sem exposição direta do control plane
+              para uma estação de desenvolvimento pela Internet.
+            </p>
+          </div>
+
+          <div>
+            <h3>Private ACR</h3>
+            <p>
+              Azure Container Registry integrado à rede por Private Endpoint
+              para armazenamento das imagens da aplicação.
+            </p>
+          </div>
+
+          <div>
+            <h3>Private Key Vault</h3>
+            <p>
+              Azure Key Vault utilizando Private Endpoint e Private DNS para
+              acesso controlado aos secrets da plataforma.
+            </p>
+          </div>
+
+          <div>
+            <h3>Monitoring</h3>
+            <p>
+              Log Analytics e Container Insights fornecem a base de
+              observabilidade da infraestrutura e dos workloads.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 05 — INFRASTRUCTURE AS CODE -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">05</p>
+        <h2>Infrastructure as Code</h2>
+
+        <p>
+          Toda a infraestrutura Azure é gerenciada por Terraform utilizando
+          módulos reutilizáveis para separar responsabilidades da plataforma.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Networking</h3>
+            <p>Virtual Network, subnets, Private Endpoints e integração DNS.</p>
+          </div>
+
+          <div>
+            <h3>AKS</h3>
+            <p>Cluster Kubernetes privado, identidade e autorização.</p>
+          </div>
+
+          <div>
+            <h3>Platform Services</h3>
+            <p>ACR, Key Vault e componentes de observabilidade.</p>
+          </div>
+
+          <div>
+            <h3>Identity</h3>
+            <p>Managed Identity, Workload Identity e permissões Azure RBAC.</p>
+          </div>
+
+        </div>
+
+        <div class="article-callout">
+          <strong>Infrastructure Convergence</strong>
+          <p>
+            A validação final da v1.0.0 terminou com
+            <code>No changes. Your infrastructure matches the configuration.</code>,
+            confirmando convergência entre código Terraform, state remoto e
+            infraestrutura implantada.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 06 — CI/CD E GITOPS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">06</p>
+        <h2>CI/CD &amp; GitOps</h2>
+
+        <p>
+          A plataforma separa explicitamente as responsabilidades de CI e CD.
+          GitHub Actions executa validações, automações e processos de build,
+          enquanto Argo CD controla a entrega das aplicações no Kubernetes.
+        </p>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <h3>GitHub Actions</h3>
+            <p>
+              Terraform CI, aplicação CI, validação de manifests GitOps e
+              validação completa da plataforma.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Self-hosted Runner</h3>
+            <p>
+              Runner Linux dentro da rede Azure para acesso ao Private AKS
+              e aos recursos privados da plataforma.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Argo CD</h3>
+            <p>
+              Responsável por observar o estado desejado no Git e reconciliar
+              os recursos Kubernetes.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Kustomize</h3>
+            <p>
+              Estrutura declarativa para configuração do ambiente DEV e
+              evolução futura dos demais ambientes.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 07 — IDENTITY & SECURITY -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">07</p>
+        <h2>Identity &amp; Security</h2>
+
+        <p>
+          A arquitetura privilegia autenticação baseada em identidade em vez
+          de secrets persistentes.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Microsoft Entra ID</h3>
+            <p>
+              Integração de identidade para autenticação e autorização dos
+              componentes da plataforma.
+            </p>
+          </div>
+
+          <div>
+            <h3>Azure RBAC</h3>
+            <p>
+              Controle de autorização Azure e integração com o modelo de
+              acesso ao AKS.
+            </p>
+          </div>
+
+          <div>
+            <h3>Managed Identity</h3>
+            <p>
+              O self-hosted runner utiliza System Assigned Managed Identity
+              para autenticação no Azure.
+            </p>
+          </div>
+
+          <div>
+            <h3>Workload Identity</h3>
+            <p>
+              Aplicações Kubernetes podem acessar recursos Azure sem armazenar
+              Azure client secrets dentro do cluster.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 08 — ENGINEERING DECISIONS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">08</p>
+        <h2>Key Engineering Decisions</h2>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <h3>GitOps Instead of Direct Deployment</h3>
+            <p>
+              CI não funciona como um segundo control plane de deployment.
+              Argo CD mantém Git como source of truth.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Private AKS</h3>
+            <p>
+              Operações que precisam acessar o Kubernetes API são executadas
+              dentro da rede Azure.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Managed Identity for CI</h3>
+            <p>
+              O runner utiliza identidade gerenciada em vez de credenciais
+              Azure persistentes no workflow de infraestrutura.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Validation as a Capability</h3>
+            <p>
+              A validação da plataforma é automatizada e faz parte do próprio
+              ciclo de engenharia.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 09 — VALIDATION -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">09</p>
+        <h2>Validação End-to-End</h2>
+
+        <p>
+          A v1.0.0 foi encerrada somente após a validação do caminho completo
+          da plataforma.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Terraform</h3>
+            <p>Formatting, validate, plan e infraestrutura convergente.</p>
+          </div>
+
+          <div>
+            <h3>Private Connectivity</h3>
+            <p>Conectividade do runner Azure com o Private AKS validada.</p>
+          </div>
+
+          <div>
+            <h3>Authentication &amp; RBAC</h3>
+            <p>Managed Identity, autenticação AKS e autorização Azure RBAC validadas.</p>
+          </div>
+
+          <div>
+            <h3>GitOps</h3>
+            <p>Workloads Kubernetes e aplicações Argo CD validados end-to-end.</p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 10 — RESULTADOS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">10</p>
+        <h2>Resultados</h2>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <h3>Private Platform</h3>
+            <p>
+              AKS, ACR e Key Vault operando dentro de uma arquitetura
+              orientada a conectividade privada.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Reproducible Infrastructure</h3>
+            <p>
+              Infraestrutura modular gerenciada por Terraform e remote state.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Automated Delivery</h3>
+            <p>
+              CI automatizado e Continuous Delivery baseado em Argo CD e GitOps.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Validated Platform</h3>
+            <p>
+              Fluxo privado de infraestrutura, identidade, Kubernetes e GitOps
+              validado de ponta a ponta.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 11 — TECNOLOGIAS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">11</p>
+        <h2>Tecnologias</h2>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Cloud</h3>
+            <p>
+              <strong>Microsoft Azure</strong><br>
+              <strong>Azure Kubernetes Service</strong><br>
+              <strong>Azure Container Registry</strong><br>
+              <strong>Azure Key Vault</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3>Infrastructure</h3>
+            <p>
+              <strong>Terraform</strong><br>
+              <strong>Private Endpoints</strong><br>
+              <strong>Private DNS</strong><br>
+              <strong>Azure Networking</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3>CI/CD &amp; GitOps</h3>
+            <p>
+              <strong>GitHub Actions</strong><br>
+              <strong>Argo CD</strong><br>
+              <strong>Kustomize</strong><br>
+              <strong>Docker</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3>Identity &amp; Observability</h3>
+            <p>
+              <strong>Microsoft Entra ID</strong><br>
+              <strong>Azure RBAC</strong><br>
+              <strong>Workload Identity</strong><br>
+              <strong>Log Analytics</strong>
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 12 — GITHUB -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">12</p>
+        <h2>Projeto no GitHub</h2>
+
+        <p>
+          O código-fonte, os módulos Terraform, workflows, manifests GitOps
+          e documentação de arquitetura estão disponíveis publicamente.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Terraform</h3>
+            <p>Infraestrutura modular e configuração do ambiente DEV.</p>
+          </div>
+
+          <div>
+            <h3>GitHub Actions</h3>
+            <p>CI de infraestrutura, aplicação, GitOps e platform validation.</p>
+          </div>
+
+          <div>
+            <h3>GitOps</h3>
+            <p>Argo CD, AppProject, root application e Kustomize overlay.</p>
+          </div>
+
+          <div>
+            <h3>Documentation</h3>
+            <p>Arquitetura, Azure foundation e decisões de engenharia.</p>
+          </div>
+
+        </div>
+
+        <div class="case-cta">
+
+          <h2>Explore a plataforma completa</h2>
+
+          <p>
+            Consulte o código e a documentação técnica da
+            Enterprise Azure GitOps Platform v1.0.0 no GitHub.
+          </p>
+
+          <div class="case-cta-actions">
+            <a
+              href="https://github.com/leandromartinelli-cloud/enterprise-azure-gitops-platform"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Explorar projeto no GitHub →
+            </a>
+
+            <a
+              href="https://github.com/leandromartinelli-cloud/enterprise-azure-gitops-platform/releases/tag/v1.0.0"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver release v1.0.0 →
+            </a>
+          </div>
+
+        </div>
+
+      </section>
+
+    </article>
+
+  </main>
+
+  <footer>
+    <p>
+      © Leandro Martinelli — Cloud Infrastructure • Azure • Kubernetes • DevOps
+    </p>
+  </footer>
+
+</body>
+</html>
