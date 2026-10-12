@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing zone Azure: os 7 pilares da fundação | Leandro Martinelli</title>
+<meta name="description" content="Os 7 pilares de uma landing zone Azure — assinaturas, rede, identidade, segurança, governança, automação e operação — e os 4 erros mais caros na fundação da plataforma.">
+<meta property="og:title" content="Landing zone Azure: os 7 pilares da fundação">
+<meta property="og:description" content="A decisão mais cara em Cloud acontece antes do primeiro recurso.">
+<link rel="stylesheet" href="../css/artigo.css">
+</head>
+<body>
+<header class="topo">
+  <a class="logo" href="../index.html">Leandro Martinelli</a>
+  <nav>
+    <a href="../index.html">Sobre</a>
+    <a href="../index.html">Especialidades</a>
+    <a href="../index.html">Projetos</a>
+    <a href="../index.html">Artigos</a>
+    <a href="../index.html">Contato</a>
+  </nav>
+</header>
+<main>
+<nav class="breadcrumb"><a href="../index.html">Artigos</a> / Landing Zone &amp; Azure</nav>
+<article>
+<h1>Landing zone Azure: os 7 pilares da fundação</h1>
+<p class="meta">Leandro Martinelli • Outubro de 2026 • Cloud Infrastructure &amp; Architecture</p>
+<p class="tags"><span>Landing Zone</span> <span>Azure</span> <span>Governança</span> <span>IaC</span></p>
+
+<p>A decisão mais cara em Cloud acontece antes do primeiro recurso. Landing zone mal desenhada cobra juros por anos: rede refeita, identidade remendada, governança improvisada. O custo não aparece na fatura do primeiro mês — aparece quando a plataforma precisa crescer e a fundação não suporta.</p>
+
+<h2>O que é uma landing zone (e o que ela não é)</h2>
+<p>Landing zone é a fundação sobre a qual os workloads são construídos: assinaturas, rede, identidade, governança e automação definidos <strong>antes</strong> do primeiro recurso de aplicação. Não é um produto, não é um template pronto do CAF e não é um projeto com data de fim. É uma plataforma.</p>
+<p>O erro conceitual mais comum é tratá-la como etapa burocrática de migração. Na prática, ela define se cada workload novo nasce padronizado ou nasce sendo consertado.</p>
+<p class="destaque">O ponto central: erro na fundação se propaga para tudo que vem em cima.</p>
+
+<h2>1. Assinaturas e Management Groups</h2>
+<p>A hierarquia de Management Groups e a estratégia de assinaturas definem limites de custo, acesso e política desde o topo.</p>
+<ul>
+<li>Separe ambientes (produção, não produção, sandbox) em assinaturas distintas.</li>
+<li>Use Management Groups para aplicar Policy e RBAC em bloco, não recurso a recurso.</li>
+<li>Defina ownership de cada assinatura: quem consome, quem paga, quem responde.</li>
+</ul>
+
+<h2>2. Rede</h2>
+<p>Hub/spoke, conectividade híbrida, DNS e endereçamento pensados para crescer. Endereçamento mal planejado é o erro mais silencioso: uma VNet com /24 parece suficiente até o dia em que o espaço acaba. Reserve espaço maior do que a necessidade atual — endereço é barato, re-endereçar não é.</p>
+
+<h2>3. Identidade e acesso</h2>
+<p>Entra ID como fonte única de identidade, RBAC com menor privilégio e PIM para elevação just-in-time. Nenhuma credencial estática em código, nenhuma conta permanente com Owner. A identidade é o perímetro: quem acessa o quê precisa ser auditável desde o dia 1.</p>
+
+<h2>4. Segurança</h2>
+<p>Defesa em profundidade: Key Vault para segredos, políticas de rede entre camadas, inspeção centralizada no hub. Segurança não é um serviço que se adiciona depois — é uma propriedade do desenho.</p>
+
+<h2>5. Governança</h2>
+<p>Azure Policy, tags, budgets e ownership desde o primeiro recurso. "Governança depois que estabilizar" é a frase que mais antecede incidentes de custo e conformidade. Tag obrigatória, budget com alerta e política de negação para o que não está padronizado.</p>
+
+<h2>6. Automação</h2>
+<p>IaC com Terraform ou Bicep para <strong>toda</strong> a fundação, sem exceção. Fundação que existe só no portal não é reproduzível, não é auditável e não sobrevive à troca de time. O IaC também é a documentação: o repositório conta como o ambiente foi construído.</p>
+
+<h2>7. Operação</h2>
+<p>Observabilidade, FinOps, backup e DR como parte do desenho, não como remendo. A landing zone só cumpre seu papel quando a operação dela é previsível: monitoramento com resposta definida, custos visíveis por time, recuperação testada — não presumida.</p>
+
+<h2>Os 4 erros que mais vejo</h2>
+<ol>
+<li><strong>Criar recurso antes da fundação.</strong> O projeto precisa entregar, a fundação "atrapalha", e o ambiente nasce sem padrão.</li>
+<li><strong>Rede redesenhada no meio do caminho.</strong> O refaze mais caro que existe em Cloud.</li>
+<li><strong>"Governança depois que estabilizar."</strong> O dia em que estabiliza nunca chega.</li>
+<li><strong>IaC só para o que é novo.</strong> O legado fica fora do controle e vira dívida permanente.</li>
+</ol>
+
+<h2>Checklist prático</h2>
+<ul>
+<li>Hierarquia de Management Groups e separação de assinaturas definidas?</li>
+<li>Endereçamento documentado com espaço para crescimento?</li>
+<li>Identidade com menor privilégio e PIM, sem credenciais estáticas?</li>
+<li>Policy, tags e budgets ativos desde o primeiro recurso?</li>
+<li>Fundação inteira em IaC, versionada e revisável?</li>
+<li>Observabilidade, backup e DR desenhados junto com a plataforma?</li>
+</ul>
+
+<h2>Conclusão</h2>
+<p>Landing zone não é projeto, é plataforma. Os 7 pilares — assinaturas, rede, identidade, segurança, governança, automação e operação — definem se o ambiente Azure nasce pronto para crescer ou nasce sendo consertado. O investimento na fundação é o de menor custo e maior retorno de todo o ciclo de vida da plataforma.</p>
+</article>
+
+<aside class="autor">
+<h2>Sobre o autor</h2>
+<h3>Leandro Martinelli</h3>
+<p>Especialista em Infraestrutura Cloud, com atuação em Microsoft Azure, arquitetura de soluções, automação, segurança, governança e otimização de ambientes Cloud.</p>
+</aside>
+
+<p class="voltar"><a href="../index.html">← Voltar para Artigos</a></p>
+</main>
+</body>
+</html>
