@@ -1,0 +1,81 @@
+:root {
+  --azul: #0078D4;
+  --azul-claro: #56B4FF;
+  --texto: #1a2332;
+  --texto-suave: #5a6b7d;
+  --fundo: #ffffff;
+  --borda: #e3e9ef;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--texto);
+  background: var(--fundo);
+  line-height: 1.7;
+}
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 6%;
+  border-bottom: 1px solid var(--borda);
+}
+.topo .logo { font-weight: 700; color: var(--texto); text-decoration: none; }
+.topo nav a {
+  color: var(--texto-suave);
+  text-decoration: none;
+  margin-left: 22px;
+  font-size: 0.95rem;
+}
+.topo nav a:hover { color: var(--azul); }
+main { max-width: 780px; margin: 0 auto; padding: 40px 24px 60px; }
+.breadcrumb { font-size: 0.9rem; color: var(--texto-suave); margin-bottom: 28px; }
+.breadcrumb a { color: var(--azul); text-decoration: none; }
+article h1 {
+  font-size: 2.1rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+article .meta { color: var(--texto-suave); font-size: 0.95rem; margin-bottom: 10px; }
+article .tags span {
+  display: inline-block;
+  background: #eef5fc;
+  color: var(--azul);
+  font-size: 0.8rem;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin: 0 6px 6px 0;
+}
+article h2 {
+  font-size: 1.35rem;
+  margin: 38px 0 14px;
+  padding-top: 22px;
+  border-top: 1px solid var(--borda);
+}
+article p { margin-bottom: 16px; }
+article ul, article ol { margin: 0 0 16px 22px; }
+article li { margin-bottom: 8px; }
+.destaque {
+  border-left: 4px solid var(--azul);
+  padding: 6px 0 6px 18px;
+  color: var(--texto);
+  font-weight: 500;
+  margin: 22px 0;
+}
+.autor {
+  background: #f6f9fc;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 44px 0 20px;
+}
+.autor h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-suave); border: none; margin: 0 0 8px; padding: 0; }
+.autor h3 { font-size: 1.1rem; margin-bottom: 8px; }
+.autor p { font-size: 0.95rem; color: var(--texto-suave); margin: 0; }
+.voltar a { color: var(--azul); text-decoration: none; font-size: 0.95rem; }
+@media (max-width: 640px) {
+  .topo { flex-direction: column; gap: 12px; }
+  .topo nav a { margin: 0 10px; }
+  article h1 { font-size: 1.6rem; }
+}
