@@ -672,5 +672,6 @@
     </p>
   </footer>
 
+  <script>document.querySelectorAll("footer p").forEach(function(p){p.textContent=p.textContent.replace(/© \d{4}/,"© "+new Date().getFullYear())})</script>
 </body>
 </html>
