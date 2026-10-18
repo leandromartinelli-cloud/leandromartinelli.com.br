@@ -1952,3 +1952,23 @@ footer {
   letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
+/* Correcao 6: fluxo de artigo empilhado no mobile (WCAG 1.4.10) */
+
+@media (max-width: 760px) {
+  .technical-article .article-flow {
+    flex-direction: column;
+    align-items: stretch;
+    overflow-x: visible;
+  }
+
+  .technical-article .article-flow > span:not(.article-flow-arrow) {
+    flex: none;
+    width: 100%;
+    text-align: center;
+  }
+
+  .technical-article .article-flow .article-flow-arrow {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+}
