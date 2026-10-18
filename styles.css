@@ -1944,5 +1944,11 @@ footer {
     letter-spacing: -0.03em;
   }
 }
-
-
+/* Data de publicacao nos cards de artigo */
+.content-date {
+  font-style: normal;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
