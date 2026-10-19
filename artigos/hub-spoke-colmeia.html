@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Por que seu hub-spoke virou uma colmeia? | Leandro Martinelli</title>
+
+  <meta
+    name="description"
+    content="A topologia que promete ordem e entrega complexidade. Os quatro sintomas de um hub-spoke degradado, a causa raiz de cada um e o caminho de volta para o desenho limpo."
+  >
+
+  <link
+    rel="canonical"
+    href="https://leandromartinelli.com.br/artigos/hub-spoke-colmeia.html"
+  >
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Leandro Martinelli">
+  <meta property="og:title" content="Por que seu hub-spoke virou uma colmeia?">
+  <meta
+    property="og:description"
+    content="Peering direto entre spokes, NAT Gateway em cada spoke, NVA subdimensionado e UDR sem dono: os quatro sintomas de um hub-spoke que virou colmeia."
+  >
+  <meta
+    property="og:url"
+    content="https://leandromartinelli.com.br/artigos/hub-spoke-colmeia.html"
+  >
+
+  <meta property="article:author" content="Leandro Martinelli">
+  <meta property="article:published_time" content="2026-10-18">
+  <meta property="article:section" content="Cloud Infrastructure">
+  <meta property="article:tag" content="Microsoft Azure">
+  <meta property="article:tag" content="Hub-Spoke">
+  <meta property="article:tag" content="Azure Firewall">
+  <meta property="article:tag" content="Networking">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Por que seu hub-spoke virou uma colmeia?">
+  <meta
+    name="twitter:description"
+    content="Os quatro sintomas de um hub-spoke degradado e o contrato de plataforma que impede a colmeia de voltar."
+  >
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="../index.html#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="../index.html#sobre">Sobre</a>
+        <a href="../index.html#especialidades">Especialidades</a>
+        <a href="../index.html#projetos">Projetos</a>
+        <a href="../index.html#artigos">Artigos</a>
+        <a href="../index.html#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="article-page">
+
+    <article class="technical-article">
+
+      <div class="article-breadcrumb">
+        <a href="../index.html#artigos">Artigos</a>
+        <span>/</span>
+        <span>Azure &amp; Networking</span>
+      </div>
+
+      <header class="article-header">
+        <p class="article-category">Azure • Networking • Arquitetura</p>
+
+        <h1>Por que seu hub-spoke virou uma colmeia?</h1>
+
+        <p class="article-lead">
+          A topologia que promete ordem e entrega complexidade, e como voltar
+          para o desenho limpo. Os quatro sintomas da colmeia, a causa raiz
+          de cada um e o contrato de plataforma que impede o retorno.
+        </p>
+
+        <div class="article-meta">
+          <span>Leandro Martinelli</span>
+          <span>•</span>
+          <span>Outubro de 2026</span>
+          <span>•</span>
+          <span>Cloud Infrastructure &amp; Architecture</span>
+        </div>
+      </header>
+
+      <section class="article-content">
+
+        <h2>Todo hub-spoke começa limpo</h2>
+
+        <p>
+          Todo ambiente Azure corporativo começa limpo: um hub, spokes em
+          peering, tráfego inspecionado no centro. Seis meses depois, ninguém
+          consegue mais desenhar o diagrama de memória.
+        </p>
+
+        <p>
+          O hub-spoke não falhou de propósito: ele degradou por decisão local
+          que parecia inofensiva a cada sprint. Neste artigo, os quatro
+          sintomas que indicam que sua topologia virou uma colmeia, a causa
+          raiz de cada um e o caminho de volta.
+        </p>
+
+        <h2>Sintoma 1: Spoke falando direto com spoke</h2>
+
+        <p>
+          O primeiro peering direto entre spokes parece pragmático: "é só
+          para o A e o B conversarem". O segundo, também. No décimo, você tem
+          uma malha O(n²), e cada novo spoke nasce com cinco peerings para
+          propagar rotas.
+        </p>
+
+        <p>
+          O problema não é o tráfego, é o modelo: peering spoke-a-spoke
+          significa que a inspeção, a segmentação e o audit do fluxo entre
+          workloads vivem em N lugares ao mesmo tempo. Quando o time de
+          segurança pergunta "quais aplicações conversam entre si?", a
+          resposta vira um projeto de descobrimento.
+        </p>
+
+        <div class="article-callout">
+          <strong>Causa raiz:</strong>
+          A plataforma não ofereceu um caminho padrão para comunicação
+          spoke-a-spoke, então cada time inventou o seu.
+        </div>
+
+        <p>
+          <strong>Correção:</strong> defina que o Leste-Oeste inspecionado
+          passa pelo hub (firewall central com regras por rede virtual) ou,
+          se o volume justificar, padronize um padrão explícito de peering
+          seletivo documentado como exceção. A decisão precisa ser da
+          plataforma, não do time de workload.
+        </p>
+
+        <h2>Sintoma 2: Um NAT Gateway em cada spoke</h2>
+
+        <p>
+          Egress de internet é o segundo lugar onde a colmeia nasce. Sem um
+          padrão central, cada spoke recebe seu próprio NAT Gateway, e seu
+          IP público. A fatura acumula: NAT Gateway cobra por hora e por GB
+          processado, e uma dezena deles ociosos é dinheiro queimado.
+        </p>
+
+        <p>
+          Há um custo invisível pior: cada spoke com IP próprio de saída é um
+          ponto de allowlist em todo fornecedor externo. Você trocou um
+          problema de arquitetura por cinquenta problemas operacionais.
+        </p>
+
+        <div class="article-callout">
+          <strong>Causa raiz:</strong>
+          Medo do "single point of failure" no egress central, que é um medo
+          de 2015. Um firewall com SLA de 99,99% e scale units atende o
+          egress de uma organização inteira hoje.
+        </div>
+
+        <p>
+          <strong>Correção:</strong> egress central no hub, com SNAT
+          previsível e registrado. Quando um spoke realmente precisar de IP
+          dedicado (exigência de fornecedor, compliance), documente como
+          exceção: exceção com dono, não padrão por omissão.
+        </p>
+
+        <h2>Sintoma 3: NVA subdimensionado no caminho de tudo</h2>
+
+        <p>
+          Todo o tráfego Norte-Sul e Leste-Oeste passa pelo hub, o firewall
+          (NVA) vira gargalo: picos de replicação derrubam a latência de
+          tudo, e o dimensionamento inicial, feito com um workload de teste,
+          não sobrevive ao primeiro fim de mês real.
+        </p>
+
+        <p>
+          O erro clássico é dimensionar o NVA pela média de tráfego. Workload
+          corporativo não tem tráfego médio: tem backup às 2h, sincronização
+          de banco no fim do ciclo e deploy que despeja imagens no registry
+          de uma vez.
+        </p>
+
+        <div class="article-callout">
+          <strong>Causa raiz:</strong>
+          O hub foi dimensionado como projeto, não como plataforma, sem
+          teste de carga do agregado de todos os spokes.
+        </div>
+
+        <p>
+          <strong>Correção:</strong> dimensione pelo pico agregado somado ao
+          headspace de crescimento, habilite autoscaling no NVA (ou avalie
+          Azure Firewall, que escala nativamente) e monitore o throughput do
+          firewall como um SLO de plataforma, não como métrica de máquina.
+        </p>
+
+        <h2>Sintoma 4: UDR sem dono</h2>
+
+        <p>
+          Nenhuma topologia degrada mais rápido do que uma tabela de rota
+          que ninguém controla. Alguém adiciona uma rota 0.0.0.0/0 apontando
+          para um appliance que foi descomissionado; outra equipe "corrige"
+          apontando para um IP que era de outra solução; três meses depois, o
+          tráfego de um spoke sai pela internet sem passar por inspeção
+          nenhuma, e ninguém percebe.
+        </p>
+
+        <p>
+          UDR é código, e código sem revisão é dívida. A tabela de rotas de
+          um spoke é uma decisão de arquitetura, não um detalhe de
+          implementação do time que precisa "fazer funcionar".
+        </p>
+
+        <div class="article-callout">
+          <strong>Causa raiz:</strong>
+          Rotas criadas no portal, à mão, por quem precisava resolver um
+          problema na hora.
+        </div>
+
+        <p>
+          <strong>Correção:</strong> rotas em IaC (Terraform/Bicep), com
+          módulo central que a plataforma versiona e os times apenas
+          consomem. Se um spoke precisa de uma rota que foge do padrão, a
+          mudança passa por pull request, e fica registrada, revisável e
+          reversível.
+        </p>
+
+        <h2>O padrão por trás dos quatro sintomas</h2>
+
+        <p>
+          Nenhum desses problemas é técnico em sua origem. Todos eles nascem
+          do mesmo vazio: a plataforma não ofereceu um caminho padronizado,
+          então cada time trilhou o mais rápido. Peering direto, NAT próprio,
+          UDR manual: cada um é um atalho racional tomado localmente que
+          cobra caro globalmente.
+        </p>
+
+        <p>
+          Hub-spoke não é um desenho de rede: é um contrato de plataforma.
+          Ele só funciona se a plataforma responder, com produto pronto, as
+          três perguntas que todo time faz: como meu spoke sai para a
+          internet, como ele conversa com outro spoke, e como ele é
+          inspecionado. Quando essas três respostas existem como padrão, a
+          colmeia não se forma. Quando não existem, não adianta redesenhar:
+          em seis meses ela volta.
+        </p>
+
+        <h2>Checklist para desconstruir a colmeia</h2>
+
+        <ol>
+          <li>
+            <strong>Inventarie todos os peerings spoke-a-spoke:</strong> cada
+            um vira caso de uso a padronizar ou exceção a documentar.
+          </li>
+          <li>
+            <strong>Consolide o egress no hub:</strong> mantenha IP dedicado
+            apenas onde fornecedor ou compliance exigir.
+          </li>
+          <li>
+            <strong>Dimensione o NVA pelo pico agregado,</strong> com
+            autoscaling, e trate throughput como SLO.
+          </li>
+          <li>
+            <strong>Mova toda UDR para IaC</strong> com módulo central e
+            revisão por pull request.
+          </li>
+          <li>
+            <strong>Documente o contrato da plataforma:</strong> egress,
+            Leste-Oeste e inspeção em uma página que os times consigam ler em
+            cinco minutos.
+          </li>
+        </ol>
+
+        <p>
+          A colmeia não se desconstrói em um projeto: se desconstrói em um
+          contrato. Comece pela página.
+        </p>
+
+      </section>
+
+      <footer class="article-author">
+        <p class="article-author-label">Sobre o autor</p>
+
+        <h2>Leandro Martinelli</h2>
+
+        <p>
+          Especialista em Infraestrutura Cloud com atuação em arquitetura,
+          automação, Kubernetes, Microsoft Azure, segurança, DevOps e
+          modernização de ambientes corporativos.
+        </p>
+
+        <a href="../index.html#artigos">← Voltar para Artigos</a>
+      </footer>
+
+    </article>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>
