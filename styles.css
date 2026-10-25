@@ -2112,3 +2112,46 @@ footer {
     font-size: 0.92rem;
   }
 }
+/* Case study — codigo e legenda do diagrama */
+
+.case-page code {
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-secondary);
+  color: var(--azure-light);
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.92em;
+}
+
+.case-page pre {
+  margin: 28px 0;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  overflow-x: auto;
+}
+
+.case-page pre code {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+.case-page .case-architecture-diagram img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.case-page .case-architecture-diagram figcaption {
+  margin-top: 14px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
