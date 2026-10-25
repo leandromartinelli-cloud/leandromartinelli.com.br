@@ -2155,3 +2155,26 @@ footer {
   font-size: 0.92rem;
   line-height: 1.7;
 }
+/* Icone nos botoes */
+
+.button-with-icon {
+  gap: 9px;
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  transition: transform 0.2s ease;
+}
+
+.button-with-icon:hover .button-icon {
+  transform: scale(1.08);
+}
+
+@media (max-width: 560px) {
+  .button-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
