@@ -4,48 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Azure Firewall Premium: inspeção de saída que um NSG nunca vai fazer | Leandro Martinelli</title>
+  <title>Azure Firewall Premium Lab: IDPS, TLS Inspection e saída inspecionada | Leandro Martinelli</title>
 
   <meta
     name="description"
-    content="Laboratório de Azure Firewall Premium: IDPS em modo deny, inspeção de TLS com CA própria, políticas hierárquicas e o limite do que um NSG enxerga no tráfego de saída."
+    content="Case study de um laboratório Azure reproduzível em Terraform que prova onde termina a proteção de um NSG e onde começa a de um firewall de próxima geração: IDPS em modo Deny, inspeção TLS com CA própria, políticas hierárquicas e auditoria com KQL."
   >
 
   <link
     rel="canonical"
     href="https://leandromartinelli.com.br/cases/azure-firewall-premium-lab.html"
   >
+
   <meta property="og:type" content="article">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Leandro Martinelli">
-  <meta property="og:title" content="Azure Firewall Premium: inspeção de saída que um NSG nunca vai fazer">
+  <meta property="og:title" content="Azure Firewall Premium Lab: IDPS, TLS Inspection e saída inspecionada">
   <meta
     property="og:description"
-    content="O que acontece com o tráfego de saída quando a fundação tem inspeção de verdade: IDPS em deny, TLS inspection com CA própria e o que o NSG não enxerga."
+    content="Hub-spoke reproduzível com Firewall Premium, IDPS em Deny, inspeção TLS com CA própria e cinco consultas KQL para auditar o tráfego de saída."
   >
   <meta
     property="og:url"
     content="https://leandromartinelli.com.br/cases/azure-firewall-premium-lab.html"
   >
-
-  <meta property="og:image" content="https://leandromartinelli.com.br/assets/images/azure-firewall-premium-lab-architecture.png">
+  <meta
+    property="og:image"
+    content="https://leandromartinelli.com.br/assets/images/azure-firewall-premium-lab-architecture.png"
+  >
   <meta property="og:image:alt" content="Arquitetura do Azure Firewall Premium Lab com hub, spoke e inspeção de saída">
-  <meta name="twitter:card" content="summary_large_image">
 
-  '<meta property="article:author" content="Leandro Martinelli">
+  <meta property="article:author" content="Leandro Martinelli">
   <meta property="article:published_time" content="2026-10-25">
-  <meta property="article:section" content="Segurança">
+  <meta property="article:section" content="Cloud Infrastructure">
   <meta property="article:tag" content="Microsoft Azure">
   <meta property="article:tag" content="Azure Firewall">
   <meta property="article:tag" content="IDPS">
+  <meta property="article:tag" content="TLS Inspection">
   <meta property="article:tag" content="Landing Zone">
 
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Azure Firewall Premium: inspeção de saída que um NSG nunca vai fazer">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Azure Firewall Premium Lab: IDPS, TLS Inspection e saída inspecionada">
   <meta
     name="twitter:description"
-    content="IDPS em deny, inspeção de TLS com CA própria e a diferença entre filtrar conexão e inspecionar conteúdo."
+    content="O que o NSG não enxerga: IDPS em Deny, TLS Inspection com CA própria e auditoria de egress com KQL."
   >
+
   <link rel="stylesheet" href="../styles.css">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png">
 </head>
@@ -68,214 +72,723 @@
     </nav>
   </header>
 
-  <main class="article-page">
+  <main>
 
-    <article class="technical-article">
+    <article class="article-page case-page">
 
       <div class="article-breadcrumb">
-        <a href="../index.html#projetos">Projetos</a>
-        <span>/</span>
-        <span>Segurança &amp; Azure</span>
+        <a href="../index.html#projetos">← Voltar para projetos</a>
       </div>
 
       <header class="article-header">
-        <p class="article-category">Segurança • Azure • Landing Zone</p>
 
-        <h1>Azure Firewall Premium: inspeção de saída que um NSG nunca vai fazer</h1>
+        <p class="article-eyebrow">
+          CASE STUDY • AZURE • NETWORK SECURITY • LANDING ZONE
+        </p>
 
-        <p class="article-lead">
-          Montei um laboratório para responder uma pergunta simples: o que
-          acontece com o tráfego de saída quando a fundação tem inspeção de
-          verdade? A resposta envolve IDPS em modo deny, inspeção de TLS com CA
-          própria e uma descoberta desconfortável sobre o que o NSG enxerga.
+        <h1>
+          Azure Firewall Premium Lab:
+          IDPS, TLS Inspection e saída inspecionada
+        </h1>
+
+        <p class="article-subtitle">
+          Laboratório reproduzível em Terraform que prova onde termina a proteção
+          de um Network Security Group e onde começa a de um firewall de próxima
+          geração, com IDPS em modo Deny, inspeção de TLS com CA própria,
+          políticas hierárquicas e auditoria analítica no Log Analytics.
         </p>
 
         <div class="article-meta">
-          <span>Leandro Martinelli</span>
-          <span>•</span>
-          <span>Outubro de 2026</span>
-          <span>•</span>
-          <span>Cloud Infrastructure &amp; Architecture</span>
+          <span>Microsoft Azure</span>
+          <span>Azure Firewall</span>
+          <span>Terraform</span>
+          <span>IDPS</span>
+          <span>TLS Inspection</span>
+          <span>KQL</span>
         </div>
+
       </header>
 
-      <section class="article-content">
+      <!-- 01 — CONTEXTO -->
 
-        <h2>Por que inspecionar a saída</h2>
+      <section class="article-section">
+
+        <p class="article-section-number">01</p>
+        <h2>Contexto</h2>
 
         <p>
-          Quem desenha Landing Zone gasta horas no tráfego de entrada e trata a
-          saída como detalhe. É o contrário que revela maturidade: exfiltração
-          de dados, C2 de malware e callbacks de supply chain saem pela porta
-          leste-oeste que ninguém olha.
+          Quem desenha uma Landing Zone gasta a maior parte do tempo no tráfego
+          de entrada. Regras de inbound, publicação de aplicação, exposição de
+          endpoint e WAF consomem as decisões difíceis. A saída costuma entrar no
+          fim do projeto, resolvida com uma regra ampla e a frase "depois a gente
+          ajusta".
         </p>
 
         <p>
-          Um NSG é um filtro de camada 3 e 4. Ele responde a duas perguntas:
-          qual IP e qual porta. Não enxerga o conteúdo do pacote, não distingue
-          contoso.sharepoint.com de um domínio malicioso resolvido no mesmo IP,
-          e nunca vai decifrar nada.
+          Só que a saída é justamente por onde passam os eventos que mais doem:
+          exfiltração de dados, comunicação de comando e controle de malware e
+          callback de supply chain. Nenhum deles precisa de porta de entrada
+          aberta. Todos precisam apenas de uma saída permissiva.
         </p>
 
         <p>
-          O Azure Firewall Premium adiciona o que falta: IDPS com assinaturas
-          atualizadas continuamente, filtragem por FQDN com TLS termination,
-          categorias de URL e inspeção TLS do tráfego cifrado.
+          O laboratório nasceu de uma pergunta simples e desconfortável: se eu
+          deixo o NSG do workload totalmente aberto na saída, o que exatamente
+          acontece com o tráfego? A resposta separa duas camadas de defesa que
+          muita gente trata como equivalentes.
         </p>
-
-        <h2>A arquitetura do lab</h2>
-
-        <p>
-          O desenho é o hub-spoke clássico, com o Firewall Premium na subnet
-          dedicada <code>AzureFirewallSubnet</code> no hub. Dois módulos
-          Terraform sustentam o lab:
-        </p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Recurso</th>
-              <th>Papel no lab</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Hub VNet + Firewall Premium</td>
-              <td>Ponto único de saída, SKU Premium com IDPS e TLS</td>
-            </tr>
-            <tr>
-              <td>Política pai</td>
-              <td>Regras de base que a política filha herda</td>
-            </tr>
-            <tr>
-              <td>Política filha</td>
-              <td>O que cada spoke pode e não pode fazer</td>
-            </tr>
-            <tr>
-              <td>Spoke + UDR 0.0.0.0/0</td>
-              <td>Força todo tráfego de saída pelo firewall</td>
-            </tr>
-            <tr>
-              <td>VM de teste</td>
-              <td>Ubuntu com a CA do lab no trust store</td>
-            </tr>
-          </tbody>
-        </table>
 
         <div class="article-callout">
-          <strong>O detalhe que prova o conceito:</strong>
-          o NSG do spoke fica propositalmente aberto na saída. Se o tráfego
-          passar pelo firewall, a defesa é real. Se o UDR estiver errado, o lab
-          denuncia.
+          <strong>Desafio</strong>
+          <p>
+            Demonstrar, com evidência reproduzível, a diferença entre filtrar
+            conexão e inspecionar conteúdo. O ambiente precisa provar que um NSG
+            com a porta 443 liberada deixa passar ameaça cifrada, download de
+            malware e conversa com domínio malicioso hospedado em nuvem legítima.
+          </p>
         </div>
 
-        <h2>A cena que vende o lab: IDPS em ação</h2>
+      </section>
 
-        <p>Com tudo de pé, dois testes destravam a discussão:</p>
+      <!-- 02 — OBJETIVO -->
 
-        <pre><code># Domínio não autorizado: espera-se connection reset
-curl -v https://exemplo-nao-autorizado.com
+      <section class="article-section">
 
-# Teste EICAR: assinatura de malware conhecida
-curl https://secure.eicar.org/eicar.com.txt</code></pre>
+        <p class="article-section-number">02</p>
+        <h2>Objetivo</h2>
 
         <p>
-          O NSG deixa os dois passar. O firewall derruba os dois. Na tela, a
-          diferença entre filtrar conexão e inspecionar conteúdo vira algo
-          visível, e é essa cena que convence gestor de que a camada existe.
+          O lab compara duas camadas no mesmo fluxo de tráfego, sem simulação e
+          sem teoria: um Network Security Group e um firewall de próxima geração
+          com inspeção profunda de pacote.
         </p>
 
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <h3>O que o NSG enxerga</h3>
+            <p>
+              Camada 3 e 4 apenas. Endereço IP de origem, endereço IP de destino
+              e porta. Uma regra de Allow para 443 não tem como saber se o
+              conteúdo é uma atualização legítima ou um binário malicioso
+              entregue pelo mesmo CDN.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>O que o Firewall Premium enxerga</h3>
+            <p>
+              Decifra o túnel TLS com autoridade certificadora própria, inspeciona
+              o payload da requisição, aplica assinaturas de IDPS em tempo real e
+              derruba a conexão antes do primeiro byte malicioso alcançar a carga
+              de trabalho.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Critério de sucesso</h3>
+            <p>
+              A mesma requisição, saindo da mesma VM, com o mesmo NSG permissivo,
+              precisa ser permitida quando o destino é legítimo e bloqueada quando
+              o destino é malicioso. Se o resultado depende do NSG, a tese do lab
+              não se sustenta.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Escopo</h3>
+            <p>
+              Um hub, um spoke, uma VM de teste e os módulos Terraform que
+              sustentam a topologia. Nada de ambiente multi-região: o objetivo é
+              isolar a variável que está sendo testada.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 03 — ARQUITETURA -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">03</p>
+        <h2>Arquitetura</h2>
+
+        <p>
+          O desenho é o hub-spoke clássico, com uma diferença deliberada: o
+          firewall não é opcional. A VM do spoke não tem IP público e a tabela de
+          rotas não oferece caminho alternativo. Todo pacote que sai do workload
+          passa pelo endereço privado do firewall no hub.
+        </p>
+
+        <figure class="case-architecture-diagram">
+          <img
+            src="../assets/images/azure-firewall-premium-lab-architecture.png"
+            alt="Arquitetura do Azure Firewall Premium Lab: spoke com VM sem IP público, UDR 0.0.0.0/0 apontando para o Azure Firewall Premium no hub e saída para a internet com IDPS e inspeção TLS"
+            loading="lazy"
+          >
+          <figcaption>
+            Hub em 10.10.0.0/16 com AzureFirewallSubnet em 10.10.0.0/26 e firewall
+            em 10.10.0.4. Spoke em 10.20.0.0/16, workload subnet em 10.20.1.0/24 e
+            VM Ubuntu 24.04 sem IP público. Key Vault guarda a CA usada na
+            inspeção TLS e o Log Analytics recebe os diagnósticos consultados
+            pelas KQLs.
+          </figcaption>
+        </figure>
+
+        <div class="article-callout">
+          <strong>O detalhe que prova o conceito</strong>
+          <p>
+            O NSG do spoke fica propositalmente permissivo na saída, com a porta
+            443 liberada. Se o tráfego chega ao destino, a defesa veio do
+            firewall. Se o UDR estiver errado, o lab denuncia imediatamente,
+            porque o teste passa a funcionar onde deveria falhar.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 04 — HUB E FIREWALL PREMIUM -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">04</p>
+        <h2>Hub e Firewall Premium</h2>
+
+        <p>
+          O hub concentra a decisão. Ele não apenas roteia: ele decide o que pode
+          sair, com que identidade e sob qual política. Quatro capacidades
+          sustentam essa decisão no lab.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>IDPS em modo Deny</h3>
+            <p>
+              Assinaturas de intrusão aplicadas ao fluxo inspecionado. No modo
+              Deny a conexão é encerrada quando a assinatura dispara. No modo
+              Alert o evento aparece no log e o pacote segue adiante, o que em
+              laboratório não prova nada.
+            </p>
+          </div>
+
+          <div>
+            <h3>Inspeção TLS</h3>
+            <p>
+              O firewall apresenta o certificado ao cliente, decifra a sessão,
+              inspeciona o conteúdo e reestabelece a conexão com o destino. Sem
+              isso, o IDPS trabalha vendado em todo tráfego HTTPS.
+            </p>
+          </div>
+
+          <div>
+            <h3>Política pai herdada</h3>
+            <p>
+              Uma baseline corporativa define o piso de segurança e é herdada pelo
+              firewall regional. A política filha só restringe, nunca afrouxa.
+            </p>
+          </div>
+
+          <div>
+            <h3>Diagnósticos centralizados</h3>
+            <p>
+              Logs do firewall e da política enviados ao Log Analytics por módulo
+              dedicado, o que mantém a instrumentação separada da definição de
+              infraestrutura.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 05 — INFRASTRUCTURE AS CODE -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">05</p>
+        <h2>Infrastructure as Code</h2>
+
+        <p>
+          Nada no lab é criado pelo portal. Toda a topologia é declarativa, o que
+          garante que o experimento possa ser destruído e reconstruído com o mesmo
+          resultado, requisito básico para qualquer laboratório que queira servir
+          de referência.
+        </p>
+
+        <pre><code>.
+├── providers.tf
+├── environments/
+│   └── dev/
+│       ├── main.tf
+│       ├── variables.tf
+│       ├── outputs.tf
+│       └── terraform.tfvars.example
+├── modules/
+│   ├── hub/
+│   ├── spoke/
+│   └── firewall-policy/
+├── scripts/
+│   ├── generate_ca_and_import.sh
+│   └── test_idps_and_tls.sh
+└── kql/
+    ├── 01_idps_alerts.kql
+    ├── 02_top_fqdns.kql
+    ├── 03_denied_vs_allowed.kql
+    ├── 04_snat_port_utilization.kql
+    └── 05_blocked_applications.kql</code></pre>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Módulo hub</h3>
+            <p>
+              Virtual Network, subnet dedicada do firewall, IP público Standard,
+              firewall, política e configuração de diagnósticos.
+            </p>
+          </div>
+
+          <div>
+            <h3>Módulo spoke</h3>
+            <p>
+              Virtual Network do workload, subnet, NSG permissivo na saída,
+              tabela de rotas com UDR e a VM de teste.
+            </p>
+          </div>
+
+          <div>
+            <h3>Módulo firewall-policy</h3>
+            <p>
+              Política pai com baseline corporativa, regras de rede e aplicação,
+              configuração de IDPS e referência ao certificado no Key Vault.
+            </p>
+          </div>
+
+          <div>
+            <h3>Ambiente dev</h3>
+            <p>
+              Composição dos três módulos, variáveis de entrada, outputs e o
+              exemplo de tfvars usado no provisionamento.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="article-callout">
+          <strong>Deploy reprodutível</strong>
+          <p>
+            O fluxo é sempre o mesmo: gerar a CA, importar no Key Vault, informar
+            o <code>SECRET_ID</code> no tfvars, rodar <code>terraform init</code>
+            e aplicar. O state remoto sustenta a reconstrução do ambiente sem
+            intervenção manual no portal.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 06 — POLÍTICAS HIERÁRQUICAS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">06</p>
+        <h2>Políticas hierárquicas</h2>
+
+        <p>
+          Em ambiente corporativo, o problema raramente é criar a regra. O
+          problema é impedir que ela seja desfeita na próxima sprint por alguém
+          que precisava liberar um acesso às pressas.
+        </p>
+
+        <p>
+          A política hierárquica resolve isso pela direção da herança. A política
+          pai define o piso e é aplicada ao firewall de cada hub regional. A
+          política filha herda tudo e só pode acrescentar restrição. Na prática, o
+          time do spoke consegue adicionar uma regra para o domínio específico que
+          aprovou, mas não consegue reabrir a categoria que a fundação bloqueou.
+        </p>
+
+        <div class="article-callout">
+          <strong>Governança com herança, não planilha de exceção</strong>
+          <p>
+            A diferença aparece no dia em que alguém precisa de uma exceção. Com
+            política hierárquica, a exceção vira configuração versionada e
+            revisável. Com tabela de exceções em planilha, ela vira dívida sem
+            dono.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 07 — INSPEÇÃO TLS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">07</p>
         <h2>Inspeção TLS com CA própria</h2>
 
         <p>
-          Inspeção de TLS exige certificado. No lab, gero CA raiz e
-          intermediária com OpenSSL, empacoto em PFX e importo no Key Vault:
+          Inspeção de conteúdo em tráfego cifrado exige participar da negociação.
+          O laboratório gera uma autoridade certificadora raiz e uma intermediária
+          com OpenSSL, empacota em PFX, importa no Key Vault e referencia o segredo
+          na política do firewall.
         </p>
 
-        <pre><code>az keyvault certificate import \
+        <pre><code># Gera CA raiz e intermediária, importa no Key Vault e devolve o SECRET_ID
+chmod +x scripts/generate_ca_and_import.sh
+./scripts/generate_ca_and_import.sh
+
+# Import direto, quando o PFX já existe
+az keyvault certificate import \
   --vault-name kv-lab-fw \
   --name fw-lab-ca \
   --file ca-intermediaria.pfx</code></pre>
 
         <p>
-          O firewall apresenta o certificado para o cliente, decifra, inspeciona
-          e re-estabelece a sessão com destino. A VM de teste recebe a CA no
-          trust store, então o navegador e o curl aceitam a cadeia.
+          O firewall apresenta esse certificado ao cliente, decifra a sessão,
+          aplica a inspeção e reestabelece a conexão com o destino real. A VM de
+          teste recebe a CA no trust store, então o curl e o navegador aceitam a
+          cadeia sem aviso, que é exatamente o comportamento esperado em ambiente
+          corporativo com certificado distribuído.
         </p>
 
         <div class="article-callout">
-          <strong>Fora do lab, o aviso vale dobrado:</strong>
-          distribuir a CA por GPO ou Intune e documentar o ciclo de vida é parte
-          do desenho, não detalhe operacional.
+          <strong>O aviso que vale dobrado fora do lab</strong>
+          <p>
+            Gerar certificado é a parte fácil. O desenho real inclui distribuir a
+            CA por GPO ou Intune, documentar o ciclo de vida, planejar a rotação e
+            tratar aplicações com certificate pinning, que vão falhar por design e
+            precisam de exceção consciente.
+          </p>
         </div>
-
-        <h2>Políticas hierárquicas: governança que a filha não fura</h2>
-
-        <p>
-          A política pai define a base. A política filha, vinculada ao firewall
-          de cada hub regional, herda e só pode restringir, nunca afrouxar. Na
-          prática: o time do spoke pode adicionar regra para o domínio que o
-          time de dados aprova, mas não pode liberar a categoria "social" que a
-          fundação bloqueou. É governança com herança, não planilha de exceção.
-        </p>
-
-        <h2>Auditoria com KQL</h2>
-
-        <p>
-          Cinco consultas acompanham o lab na pasta <code>/kql</code>: IDPS
-          disparado, top FQDNs acessados, negado vs permitido, utilização de
-          portas SNAT e aplicações bloqueadas. A de IDPS já sai apontando regra,
-          severidade e o IP de origem, pronta para virar regra de alerta no Log
-          Analytics.
-        </p>
-
-        <h2>O custo, sem maquiagem</h2>
-
-        <p>
-          Firewall Premium custa caro para laboratório: na casa de USD 1,50 a
-          2,00 por hora entre firewall, IP público e dados processados. O lab
-          nasceu com script de limpeza no final: <code>terraform destroy</code>
-          faz parte do passo a passo, não é nota de rodapé. Em lab, custo é
-          requisito de arquitetura.
-        </p>
-
-        <h2>Fechando</h2>
-
-        <p>
-          O lab completo, com Terraform modular, scripts de CA e KQLs, está no
-          repositório:
-          <a href="https://github.com/leandromartinelli-cloud/azure-firewall-premium-lab">github.com/leandromartinelli-cloud/azure-firewall-premium-lab</a>
-        </p>
-
-        <p>
-          A fundação que você desenha no PowerPoint é testada no tráfego de
-          saída que ninguém inspecionou. Se a sua Landing Zone não responde à
-          pergunta "o que está saindo daqui e por quê", o lab te dá o caminho
-          para começar a responder.
-        </p>
 
       </section>
 
-      <footer class="article-author">
-        <p class="article-author-label">Sobre o autor</p>
+      <!-- 08 — VALIDAÇÃO -->
 
-        <h2>Leandro Martinelli</h2>
+      <section class="article-section">
+
+        <p class="article-section-number">08</p>
+        <h2>Validação de IDPS</h2>
 
         <p>
-          Consultor de arquitetura cloud com foco em Microsoft Azure,
-          Kubernetes, automação e governança. Escreve sobre fundação de nuvem
-          em leandromartinelli.com.br.
+          A bateria de testes roda dentro da VM do spoke, com o NSG permissivo e
+          sem IP público, o que elimina qualquer rota de fuga. O script automatiza
+          a sequência e registra o resultado de cada requisição.
         </p>
 
-        <a href="../index.html#projetos">← Voltar para Projetos</a>
-      </footer>
+        <pre><code># Bateria completa de IDPS e TLS, executada dentro da VM
+bash scripts/test_idps_and_tls.sh
+
+# Domínio não autorizado pela política: espera-se reset de conexão
+curl -v https://exemplo-nao-autorizado.com
+
+# Amostra EICAR: espera-se bloqueio por assinatura de IDPS
+curl -O https://secure.eicar.org/eicar.com.txt</code></pre>
+
+        <p>
+          O teste mais didático é o do arquivo EICAR, amostra padronizada usada
+          para validar detecção antivírus. O NSG não tem como reconhecer aquilo
+          como ameaça, porque não inspeciona conteúdo. O firewall reconhece pela
+          assinatura e encerra a conexão.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Domínio não autorizado</h3>
+            <p>
+              Requisição barrada por política de rede ou aplicação, antes de
+              qualquer avaliação de conteúdo.
+            </p>
+          </div>
+
+          <div>
+            <h3>Amostra EICAR</h3>
+            <p>
+              Bloqueio por assinatura de IDPS, com severidade e IP de origem
+              registrados no Log Analytics.
+            </p>
+          </div>
+
+          <div>
+            <h3>Cadeia TLS</h3>
+            <p>
+              Handshake aceito pela VM porque a CA do lab está no trust store,
+              exatamente como em ambiente corporativo.
+            </p>
+          </div>
+
+          <div>
+            <h3>Resultado comparativo</h3>
+            <p>
+              NSG sozinho: arquivo entregue, nenhum evento. Com Firewall Premium:
+              conexão encerrada e evento de segurança.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 09 — AUDITORIA KQL -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">09</p>
+        <h2>Auditoria com KQL</h2>
+
+        <p>
+          Bloquear sem registrar resolve metade do problema. As cinco consultas do
+          repositório cobrem o ciclo de auditoria do egress e foram escritas para
+          rodar direto no Log Analytics provisionado pelo lab.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>IDPS alerts</h3>
+            <p>
+              Eventos de intrusão com assinatura, severidade, ação aplicada e IP
+              de origem. Base natural para regra de alerta.
+            </p>
+          </div>
+
+          <div>
+            <h3>Top FQDNs</h3>
+            <p>
+              Destinos mais acessados pelo spoke, útil para transformar
+              comportamento observado em regra explícita.
+            </p>
+          </div>
+
+          <div>
+            <h3>Denied vs allowed</h3>
+            <p>
+              Proporção entre tráfego permitido e negado, indicador direto de
+              política apertada demais ou frouxa demais.
+            </p>
+          </div>
+
+          <div>
+            <h3>SNAT e aplicações bloqueadas</h3>
+            <p>
+              Consumo de portas SNAT, o gargalo silencioso do egress centralizado,
+              e as aplicações barradas por categoria de URL.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="article-callout">
+          <strong>Leitura de plataforma, não de máquina</strong>
+          <p>
+            Essas consultas são o embrião de um SLO de segurança do egress: volume
+            negado, tentativas repetidas por origem e destinos novos entrando na
+            base a cada semana.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- 10 — CUSTOS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">10</p>
+        <h2>Custos e ciclo de vida</h2>
+
+        <p>
+          Firewall Premium é caro para estudo, e esconder isso seria desonesto. O
+          SKU Premium fica na faixa de USD 1,50 a USD 2,00 por hora, somando
+          firewall, IP público Standard e processamento de dados. Uma sessão de
+          uma a duas horas fica abaixo de USD 5,00.
+        </p>
+
+        <div class="article-decision-grid">
+
+          <div class="article-decision-card">
+            <h3>Custo por hora</h3>
+            <p>
+              USD 1,50 a USD 2,00 com firewall, IP público e dados processados.
+              Firewall Premium não foi feito para ficar ligado sem propósito.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Sessão completa</h3>
+            <p>
+              Menos de USD 5,00 em uma a duas horas de validação, incluindo
+              provisionamento, testes e destruição.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Pré-requisitos</h3>
+            <p>
+              Azure CLI 2.50 ou superior, Terraform 1.6 ou superior, OpenSSL na
+              estação e permissão Contributor ou Owner no resource group.
+            </p>
+          </div>
+
+          <div class="article-decision-card">
+            <h3>Destruição obrigatória</h3>
+            <p>
+              O encerramento faz parte do passo a passo. Um lab que ninguém
+              destrói deixa de ser lab e vira dívida na fatura.
+            </p>
+          </div>
+
+        </div>
+
+        <pre><code>cd environments/dev
+terraform destroy -auto-approve
+
+# Alternativa direta por resource group
+az group delete --name rg-lab-firewall-hub --yes --no-wait
+az group delete --name rg-lab-firewall-spoke --yes --no-wait</code></pre>
+
+      </section>
+
+      <!-- 11 — TECNOLOGIAS -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">11</p>
+        <h2>Tecnologias</h2>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Cloud</h3>
+            <p>
+              <strong>Microsoft Azure</strong><br>
+              <strong>Azure Firewall Premium</strong><br>
+              <strong>Azure Key Vault</strong><br>
+              <strong>Azure Bastion</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3>Networking</h3>
+            <p>
+              <strong>Hub-Spoke</strong><br>
+              <strong>VNet Peering</strong><br>
+              <strong>User Defined Routes</strong><br>
+              <strong>Network Security Groups</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3>Infrastructure</h3>
+            <p>
+              <strong>Terraform</strong><br>
+              <strong>Módulos reutilizáveis</strong><br>
+              <strong>Remote State</strong><br>
+              <strong>OpenSSL</strong>
+            </p>
+          </div>
+
+          <div>
+            <h3>Security &amp; Observability</h3>
+            <p>
+              <strong>IDPS</strong><br>
+              <strong>TLS Inspection</strong><br>
+              <strong>Log Analytics</strong><br>
+              <strong>KQL</strong>
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- 12 — GITHUB -->
+
+      <section class="article-section">
+
+        <p class="article-section-number">12</p>
+        <h2>Projeto no GitHub</h2>
+
+        <p>
+          O laboratório completo está público, com os módulos Terraform, os
+          scripts de geração de CA e teste de IDPS, as consultas KQL e o passo a
+          passo de deploy e destruição.
+        </p>
+
+        <div class="article-feature-grid">
+
+          <div>
+            <h3>Terraform</h3>
+            <p>
+              Três módulos, ambiente dev e composição declarativa da topologia.
+            </p>
+          </div>
+
+          <div>
+            <h3>Scripts</h3>
+            <p>
+              Geração e importação da CA no Key Vault e bateria de testes de IDPS
+              e TLS.
+            </p>
+          </div>
+
+          <div>
+            <h3>KQL</h3>
+            <p>
+              Cinco consultas de auditoria do egress prontas para o Log Analytics.
+            </p>
+          </div>
+
+          <div>
+            <h3>Documentação</h3>
+            <p>
+              Arquitetura, pré-requisitos, custos e procedimento de limpeza.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="case-cta">
+
+          <h2>Explore o laboratório completo</h2>
+
+          <p>
+            Consulte o código e a documentação técnica do Azure Firewall Premium
+            Lab no GitHub. Clone, execute, valide e destrua.
+          </p>
+
+          <div class="case-cta-actions">
+            <a
+              href="https://github.com/leandromartinelli-cloud/azure-firewall-premium-lab"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Explorar projeto no GitHub →
+            </a>
+
+            <a
+              href="https://github.com/leandromartinelli-cloud/azure-firewall-premium-lab#readme"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver documentação →
+            </a>
+          </div>
+
+        </div>
+
+      </section>
 
     </article>
 
   </main>
 
   <footer>
-    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+    <p>
+      © Leandro Martinelli — Cloud Infrastructure • Azure • Kubernetes • DevOps
+    </p>
   </footer>
 
   <script>document.querySelectorAll("footer p").forEach(function(p){p.textContent=p.textContent.replace(/© \d{4}/,"© "+new Date().getFullYear())})</script>
