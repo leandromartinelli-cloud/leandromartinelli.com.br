@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Leandro Martinelli | Cloud Infrastructure & Architecture</title>
+
+  <meta
+    name="description"
+    content="Portfólio profissional de Leandro Martinelli sobre Cloud Infrastructure, Microsoft Azure, Kubernetes, Terraform, DevOps e Cloud Architecture."
+  >
+
+  <link rel="canonical" href="https://leandromartinelli.com.br/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Leandro Martinelli">
+  <meta property="og:title" content="Leandro Martinelli | Cloud Infrastructure & Architecture">
+  <meta
+    property="og:description"
+    content="Cloud Infrastructure, Microsoft Azure, Kubernetes, Terraform, DevOps, segurança e arquitetura de ambientes corporativos."
+  >
+  <meta property="og:url" content="https://leandromartinelli.com.br/">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Leandro Martinelli | Cloud Infrastructure & Architecture">
+  <meta
+    name="twitter:description"
+    content="Cloud Infrastructure, Microsoft Azure, Kubernetes, Terraform, DevOps, segurança e arquitetura de ambientes corporativos."
+  >
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Leandro Martinelli",
+    "url": "https://leandromartinelli.com.br/",
+    "jobTitle": "Cloud Infrastructure Specialist",
+    "sameAs": [
+      "https://www.linkedin.com/in/leandro-martinelli/",
+      "https://github.com/leandromartinelli-cloud"
+    ],
+    "knowsAbout": [
+      "Cloud Infrastructure",
+      "Cloud Architecture",
+      "Microsoft Azure",
+      "Kubernetes",
+      "Azure Kubernetes Service (AKS)",
+      "Terraform",
+      "DevOps",
+      "Cloud Security",
+      "FinOps"
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <a href="#inicio">Leandro Martinelli</a>
+
+      <div>
+        <a href="#sobre">Sobre</a>
+        <a href="#especialidades">Especialidades</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#artigos">Artigos</a>
+        <a href="#contato">Contato</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="inicio">
+      <div class="hero-content">
+        <p class="hero-eyebrow">
+          Microsoft Azure • Cloud Architecture • Kubernetes • DevOps
+        </p>
+
+        <h1>Leandro Martinelli</h1>
+
+        <h2>Cloud Infrastructure Specialist & Cloud Architect</h2>
+
+        <p class="hero-description">
+          Arquitetura e evolução de ambientes Cloud corporativos com foco em
+          Microsoft Azure, Kubernetes, automação, segurança, conectividade
+          e governança.
+        </p>
+
+        <div class="hero-highlights">
+          <div>
+            <strong>21</strong>
+            <span>Certificações Microsoft ativas</span>
+          </div>
+
+          <div>
+            <strong>Azure</strong>
+            <span>Cloud Infrastructure & Architecture</span>
+          </div>
+
+          <div>
+            <strong>AKS</strong>
+            <span>Kubernetes & Cloud Native</span>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#projetos" class="button button-primary">
+            Ver projetos
+          </a>
+
+          <a href="#contato" class="button button-secondary">
+            Vamos conversar
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-profile">
+        <div class="hero-photo-wrapper">
+          <img
+            src="assets/images/leandro-martinelli-profile.jpg"
+            alt="Foto profissional de Leandro Martinelli"
+            class="hero-photo"
+            width="800"
+            height="800"
+          >
+        </div>
+      </div>
+    </section>
+
+    <section id="sobre">
+      <div class="about-header">
+        <p class="about-eyebrow">SOBRE</p>
+        <h2>Arquitetura Cloud além da infraestrutura</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-main">
+          <p class="about-lead">
+            Atuo na arquitetura, evolução e sustentação de ambientes Cloud
+            corporativos, transformando requisitos de negócio em soluções
+            escaláveis, seguras e sustentáveis.
+          </p>
+
+          <p>
+            Minha experiência combina infraestrutura, arquitetura e automação
+            em Microsoft Azure, com atuação em projetos de modernização,
+            conectividade híbrida, Kubernetes, segurança, plataformas de dados
+            e governança.
+          </p>
+
+          <p>
+            Mais do que provisionar recursos, busco entender como cada decisão
+            de arquitetura impacta disponibilidade, segurança, performance,
+            operação e custos ao longo do ciclo de vida da solução.
+          </p>
+        </div>
+
+        <div class="about-principles">
+          <article>
+            <span>01</span>
+            <div>
+              <h3>Arquitetura</h3>
+              <p>
+                Soluções desenhadas considerando escalabilidade,
+                resiliência, segurança e integração.
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <span>02</span>
+            <div>
+              <h3>Automação</h3>
+              <p>
+                Infraestrutura reproduzível, padronizada e integrada
+                aos processos de entrega.
+              </p>
+            </div>
+          </article>
+
+          <article>
+            <span>03</span>
+            <div>
+              <h3>Governança</h3>
+              <p>
+                Tecnologia alinhada a controles, eficiência operacional
+                e sustentabilidade do ambiente.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="especialidades">
+      <h2>Especialidades</h2>
+
+      <div>
+        <article>
+          <h3>Microsoft Azure</h3>
+          <p>
+            Arquitetura de ambientes corporativos, redes, conectividade híbrida,
+            identidade, segurança, governança e serviços PaaS.
+          </p>
+        </article>
+
+        <article>
+          <h3>Kubernetes & AKS</h3>
+          <p>
+            Arquitetura e operação de clusters, networking, workloads,
+            identidade, RBAC, observabilidade e integração com serviços Azure.
+          </p>
+        </article>
+
+        <article>
+          <h3>Infrastructure as Code & Automation</h3>
+          <p>
+            Terraform, Bicep e automação aplicados ao provisionamento,
+            padronização, governança e evolução da infraestrutura Cloud.
+          </p>
+        </article>
+
+        <article>
+          <h3>DevOps & Platform Engineering</h3>
+          <p>
+            Azure DevOps, GitHub Actions, CI/CD e práticas de automação
+            para construção e evolução de plataformas Cloud.
+          </p>
+        </article>
+
+        <article>
+          <h3>Cloud Security & Governance</h3>
+          <p>
+            Microsoft Entra ID, Azure RBAC, identidade federada, políticas,
+            controles de acesso e governança de ambientes corporativos.
+          </p>
+        </article>
+
+        <article>
+          <h3>FinOps & Cloud Optimization</h3>
+          <p>
+            Análise de consumo, rightsizing e otimização de custos equilibrando
+            eficiência financeira, performance e confiabilidade.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="certificacoes">
+      <h2>Certificações & Credenciais</h2>
+
+      <p class="certifications-intro">
+        Certificações Microsoft que reforçam minha atuação em arquitetura,
+        infraestrutura, segurança, redes e DevOps em ambientes Azure.
+      </p>
+
+      <div class="credentials-summary">
+        <div>
+          <strong>21</strong>
+          <span>Certificações Ativas</span>
+        </div>
+
+        <div>
+          <strong>28</strong>
+          <span>Exames Aprovados</span>
+        </div>
+
+        <div>
+          <strong>5</strong>
+          <span>Applied Skills</span>
+        </div>
+      </div>
+
+      <div class="certifications-grid">
+        <article>
+          <h3>Azure Solutions Architect Expert</h3>
+          <p>Arquitetura de soluções e infraestrutura Microsoft Azure.</p>
+        </article>
+
+        <article>
+          <h3>DevOps Engineer Expert</h3>
+          <p>DevOps, CI/CD, automação e entrega contínua.</p>
+        </article>
+
+        <article>
+          <h3>Cybersecurity Architect Expert</h3>
+          <p>Arquitetura, estratégia e controles de segurança.</p>
+        </article>
+
+        <article>
+          <h3>Azure Network Engineer Associate</h3>
+          <p>Redes, conectividade híbrida e arquitetura de networking Azure.</p>
+        </article>
+
+        <article>
+          <h3>Azure Security Engineer Associate</h3>
+          <p>Segurança de identidade, infraestrutura, dados e workloads Azure.</p>
+        </article>
+
+        <article>
+          <h3>Azure Administrator Associate</h3>
+          <p>Administração e operação de ambientes Microsoft Azure.</p>
+        </article>
+      </div>
+
+      <div class="certifications-actions">
+        <a
+          href="https://learn.microsoft.com/pt-br/users/leandromartinelli/transcript/dgg94c542e8r401"
+          class="button button-secondary"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Ver todas as credenciais Microsoft
+        </a>
+      </div>
+    </section>
+
+        <section id="projetos">
+      <h2>Projetos</h2>
+
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Azure • AKS • Terraform • GitHub Actions • Argo CD • GitOps
+          </p>
+
+          <h3>Enterprise Azure GitOps Platform</h3>
+
+          <p class="project-description">
+            Plataforma Kubernetes enterprise no Microsoft Azure com arquitetura
+            private-by-design, Infrastructure as Code, CI/CD, identidade baseada
+            em Azure e Continuous Delivery utilizando GitOps.
+          </p>
+
+          <div class="project-highlights">
+            <div>
+              <strong>Private Platform</strong>
+              <span>
+                Private AKS, Azure Container Registry e Key Vault integrados
+                através de Private Endpoints e Private DNS.
+              </span>
+            </div>
+
+            
+
+            <div>
+              <strong>CI/CD &amp; GitOps</strong>
+              <span>
+                GitHub Actions, self-hosted runner, Argo CD e Kustomize
+                formando o fluxo automatizado de entrega da plataforma.
+              </span>
+            </div>
+          </div>
+
+          <a
+            class="project-link"
+            href="cases/enterprise-azure-gitops-platform.html"
+          >
+            Ver Case Study →
+          </a>
+        </div>
+
+        <div
+          class="project-architecture"
+          aria-label="Arquitetura da Enterprise Azure GitOps Platform"
+        >
+          <span class="architecture-label">GITOPS PLATFORM • v1.0.0</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>GitHub</strong>
+              <span>CI / Source</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Terraform</strong>
+              <span>Infrastructure</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Private AKS</strong>
+              <span>Kubernetes</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>Argo CD</strong>
+              <span>GitOps</span>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Azure • AKS • Terraform • Docker • Kubernetes
+          </p>
+
+          <h3>Azure AKS Lab</h3>
+
+          <p class="project-description">
+            Laboratório Cloud Native desenvolvido para demonstrar uma arquitetura
+            Kubernetes no Microsoft Azure, com infraestrutura provisionada como
+            código e processo completo de construção e publicação de containers.
+          </p>
+
+          <div class="project-highlights">
+            
+
+            <div>
+              <strong>Arquitetura</strong>
+              <span>
+                Azure Kubernetes Service, Azure Container Registry e recursos
+                Azure integrados para execução da aplicação.
+              </span>
+            </div>
+
+            <div>
+              <strong>Automação</strong>
+              <span>
+                Terraform para provisionamento da infraestrutura e GitHub
+                para versionamento do código e documentação técnica.
+              </span>
+            </div>
+          </div>
+
+          <a
+            class="project-link"
+            href="https://github.com/leandromartinelli-cloud/azure-aks-lab"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Explorar projeto no GitHub →
+          </a>
+        </div>
+
+        <div class="project-architecture" aria-label="Arquitetura do Azure AKS Lab">
+          <span class="architecture-label">ARQUITETURA</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>Terraform</strong>
+              <span>Infrastructure as Code</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Azure</strong>
+              <span>Cloud Infrastructure</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>ACR</strong>
+              <span>Container Registry</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>AKS</strong>
+              <span>Kubernetes</span>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Microsoft Azure • AKS • Terraform • Azure DevOps • Security
+          </p>
+
+          <h3>Enterprise Azure & AKS Platform</h3>
+
+          <p class="project-description">
+            Case study sobre arquitetura e operação de uma plataforma enterprise
+            baseada em Microsoft Azure e Azure Kubernetes Service, com foco em
+            segurança, conectividade, automação, governança e escalabilidade.
+          </p>
+
+          <div class="project-highlights">
+            <div>
+              <strong>Arquitetura</strong>
+              <span>
+                Plataforma estruturada em camadas de identidade, networking,
+                AKS, serviços Azure, dados, integração e automação.
+              </span>
+            </div>
+
+            <div>
+              <strong>Segurança</strong>
+              <span>
+                Microsoft Entra ID, RBAC, Workload Identity, Key Vault e
+                princípios de menor privilégio.
+              </span>
+            </div>
+
+            
+          </div>
+
+          <a
+            class="project-link"
+            href="cases/enterprise-azure-aks-platform.html"
+          >
+            Ver Case Study →
+          </a>
+        </div>
+
+        <div
+          class="project-architecture"
+          aria-label="Arquitetura da Enterprise Azure and AKS Platform"
+        >
+          <span class="architecture-label">CASE STUDY</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>Azure</strong>
+              <span>Enterprise Cloud</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Security</strong>
+              <span>Identity & RBAC</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>AKS</strong>
+              <span>Kubernetes</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>Automation</strong>
+              <span>Terraform + DevOps</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Kubernetes • Karmada • Multi-Cluster • High Availability
+          </p>
+
+          <h3>Karmada Multi-Cluster Kubernetes</h3>
+
+          <p class="project-description">
+            Laboratório prático de orquestração Kubernetes multi-cluster,
+            desenvolvido para validar distribuição de workloads, failover
+            automático, recuperação de clusters e workload rebalancing
+            utilizando Karmada.
+          </p>
+
+          <div class="project-highlights">
+            <div>
+              <strong>Multi-Cluster</strong>
+              <span>
+                Distribuição ponderada de réplicas entre dois clusters
+                Kubernetes gerenciados centralmente pelo Karmada.
+              </span>
+            </div>
+
+            <div>
+              <strong>Automatic Failover</strong>
+              <span>
+                Detecção da indisponibilidade de um member cluster e
+                redistribuição das réplicas para o cluster saudável.
+              </span>
+            </div>
+
+            
+          </div>
+
+          <a
+            class="project-link"
+            href="cases/karmada-multicluster.html"
+          >
+            Ver Case Study →
+          </a>
+        </div>
+
+        <div
+          class="project-architecture"
+          aria-label="Arquitetura Kubernetes Multi-Cluster com Karmada"
+        >
+          <span class="architecture-label">MULTI-CLUSTER</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>Karmada</strong>
+              <span>Control Plane</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Member 1</strong>
+              <span>1 Replica</span>
+            </div>
+
+            <span class="architecture-arrow">↔</span>
+
+            <div class="architecture-node">
+              <strong>Failover</strong>
+              <span>2 Replicas</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>Rebalance</strong>
+              <span>1 + 1</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="artigos">
+      <div class="content-header">
+        <div>
+          <p class="content-eyebrow">CONHECIMENTO COMPARTILHADO</p>
+          <h2>Artigos & Conteúdo Técnico</h2>
+        </div>
+
+        <p class="content-intro">
+          Experiências, decisões de arquitetura e aprendizados práticos sobre
+          Cloud, Kubernetes, automação, segurança e otimização de ambientes.
+        </p>
+      </div>
+
+      <div class="content-grid">
+        <article class="content-card content-card-featured">
+          <div class="content-card-top">
+            <span class="content-category">Kubernetes • Azure <em class="content-date">· set 2026</em></span>
+            <span class="content-number">01</span>
+          </div>
+
+          <h3>AKS: Azure RBAC ou Kubernetes RBAC?</h3>
+
+          <p>
+            Entenda a diferença entre os modelos de autorização no Azure
+            Kubernetes Service e os principais pontos que devem ser avaliados
+            ao definir o controle de acesso ao cluster.
+          </p>
+
+          <div class="content-tags">
+            <span>AKS</span>
+            <span>Azure RBAC</span>
+            <span>Kubernetes</span>
+            <span>Security</span>
+          </div>
+
+          <span class="content-status">Conteúdo técnico</span>
+          <a
+            class="content-link"
+            href="artigos/aks-azure-rbac-vs-kubernetes-rbac.html"
+          >
+            Ler artigo →
+          </a>
+        </article>
+
+        <article class="content-card">
+          <div class="content-card-top">
+            <span class="content-category">FinOps • Azure <em class="content-date">· set 2026</em></span>
+            <span class="content-number">02</span>
+          </div>
+
+          <h3>Cloud não reduz custo sozinho</h3>
+
+          <p>
+            FinOps na prática para equilibrar custo, performance, confiabilidade
+            e valor para o negócio em ambientes Microsoft Azure.
+          </p>
+
+          <div class="content-tags">
+            <span>FinOps</span>
+            <span>Azure</span>
+            <span>Cost Optimization</span>
+            <span>Governance</span>
+          </div>
+
+          <span class="content-status">Conteúdo técnico</span>
+
+          <a
+            class="content-link"
+            href="artigos/finops-azure-otimizacao-custos.html"
+          >
+            Ler artigo →
+          </a>
+        </article>
+
+        <article class="content-card">
+          <div class="content-card-top">
+            <span class="content-category">Kubernetes • Azure <em class="content-date">· set 2026</em></span>
+            <span class="content-number">03</span>
+          </div>
+
+          <h3>AKS privado, ACR e Private Link: o que quebra primeiro</h3>
+
+          <p>
+            Cluster privado não é um checkbox. DNS, pull de imagem, kubectl
+            e saída dos nodes costumam falhar antes da API ficar isolada.
+          </p>
+
+          <div class="content-tags">
+            <span>AKS</span>
+            <span>ACR</span>
+            <span>Private Link</span>
+            <span>Networking</span>
+          </div>
+
+          <span class="content-status">Conteúdo técnico</span>
+
+          <a
+            class="content-link"
+            href="artigos/aks-privado-acr-private-link.html"
+          >
+            Ler artigo →
+          </a>
+        </article>
+        <article class="content-card">
+          <div class="content-card-top">
+            <span class="content-category">Landing Zone • Azure <em class="content-date">· out 2026</em></span>
+            <span class="content-number">04</span>
+          </div>
+
+          <h3>Landing zone Azure: os 7 pilares da fundação</h3>
+
+          <p>
+            Assinaturas, rede, identidade, segurança, governança, automação
+            e operação: a fundação que define se a plataforma Azure nasce
+            certa ou nasce sendo consertada.
+          </p>
+
+          <div class="content-tags">
+            <span>Landing Zone</span>
+            <span>Azure</span>
+            <span>Governança</span>
+            <span>IaC</span>
+          </div>
+
+          <span class="content-status">Conteúdo técnico</span>
+
+          <a
+            class="content-link"
+            href="artigos/landing-zone-azure-7-pilares.html"
+          >
+            Ler artigo →
+          </a>
+        </article>
+
+        <article class="content-card">
+          <div class="content-card-top">
+            <span class="content-category">Azure • Networking <em class="content-date">· out 2026</em></span>
+            <span class="content-number">05</span>
+          </div>
+
+          <h3>Por que seu hub-spoke virou uma colmeia?</h3>
+
+          <p>
+            A topologia que promete ordem degrada por decisão local. Os quatro
+            sintomas da colmeia, a causa raiz de cada um e o caminho de volta
+            para o desenho limpo.
+          </p>
+
+          <div class="content-tags">
+            <span>Hub-Spoke</span>
+            <span>Azure Firewall</span>
+            <span>NVA</span>
+            <span>Networking</span>
+          </div>
+
+          <span class="content-status">Conteúdo técnico</span>
+
+          <a
+            class="content-link"
+            href="artigos/hub-spoke-colmeia.html"
+          >
+            Ler artigo →
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <section id="contato">
+      <div class="contact-header">
+        <p class="contact-eyebrow">CONTATO & OPORTUNIDADES</p>
+        <h2>Vamos conversar?</h2>
+
+        <p class="contact-intro">
+          Estou aberto a conexões profissionais, colaboração técnica e projetos
+          relacionados a Cloud Infrastructure, Microsoft Azure, Kubernetes,
+          automação e arquitetura.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        <article class="contact-card">
+          <span class="contact-number">01</span>
+          <h3>Projetos Cloud & Arquitetura</h3>
+          <p>
+            Projetos e discussões técnicas sobre arquitetura Cloud,
+            infraestrutura Azure, Kubernetes, automação, segurança e governança.
+          </p>
+        </article>
+
+        <article class="contact-card">
+          <span class="contact-number">02</span>
+          <h3>Networking & Oportunidades</h3>
+          <p>
+            Conexões com profissionais, empresas e comunidades do ecossistema
+            Cloud, Microsoft Azure, DevOps e tecnologia.
+          </p>
+        </article>
+
+        <article class="contact-card">
+          <span class="contact-number">03</span>
+          <h3>Conteúdo & Colaboração</h3>
+          <p>
+            Troca de experiências, artigos técnicos, eventos, comunidades
+            e iniciativas relacionadas a Cloud e arquitetura.
+          </p>
+        </article>
+      </div>
+
+      <div class="contact-actions">
+        <a
+          href="https://www.linkedin.com/in/leandro-martinelli/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button button-primary"
+        >
+          Falar comigo no LinkedIn
+        </a>
+
+        <a
+          href="mailto:leandro@leandromartinelli.com.br"
+          class="button button-secondary"
+        >
+          Enviar e-mail
+        </a>
+
+        <a
+          href="https://github.com/leandromartinelli-cloud"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button button-secondary"
+        >
+          GitHub
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Leandro Martinelli. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>document.querySelectorAll("footer p").forEach(function(p){p.textContent=p.textContent.replace(/© \d{4}/,"© "+new Date().getFullYear())})</script>
+</body>
+</html>
+
+
