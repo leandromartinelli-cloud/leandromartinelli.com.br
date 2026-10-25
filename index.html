@@ -642,7 +642,79 @@
           </div>
         </div>
       </article>
-    </section>
+    
+      <article class="project-card">
+        <div class="project-content">
+          <p class="project-tech">
+            Azure • Firewall Premium • Terraform • IDPS • TLS Inspection
+          </p>
+
+          <h3>Azure Firewall Premium Lab</h3>
+
+          <p class="project-description">
+            Laboratório de inspeção de saída em Landing Zone, construído para
+            provar o que um NSG não enxerga: IDPS em modo deny, inspeção de TLS
+            com CA própria e auditoria do tráfego de saída.
+          </p>
+
+          <div class="project-highlights">
+            <div>
+              <strong>Inspeção de saída</strong>
+              <span>
+                Azure Firewall Premium no hub, com IDPS, filtragem por FQDN e
+                inspeção TLS do tráfego cifrado.
+              </span>
+            </div>
+
+            <div>
+              <strong>Governança</strong>
+              <span>
+                Políticas hierárquicas pai e filha, UDR forçando a saída pelo
+                hub e consultas KQL para auditoria.
+              </span>
+            </div>
+          </div>
+
+          <a
+            class="project-link"
+            href="cases/azure-firewall-premium-lab.html"
+          >
+            Ver Case Study →
+          </a>
+        </div>
+
+        <div class="project-architecture" aria-label="Arquitetura do Azure Firewall Premium Lab">
+          <span class="architecture-label">ARQUITETURA</span>
+
+          <div class="architecture-flow">
+            <div class="architecture-node">
+              <strong>Terraform</strong>
+              <span>Infrastructure as Code</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Hub VNet</strong>
+              <span>Conectividade</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node architecture-node-primary">
+              <strong>Firewall Premium</strong>
+              <span>IDPS + TLS</span>
+            </div>
+
+            <span class="architecture-arrow">→</span>
+
+            <div class="architecture-node">
+              <strong>Spoke</strong>
+              <span>UDR 0.0.0.0/0</span>
+            </div>
+          </div>
+        </div>
+      </article></section>
 
     <section id="artigos">
       <div class="content-header">
@@ -808,36 +880,7 @@
             Ler artigo →
           </a>
         </article>
-        <article class="content-card">
-          <div class="content-card-top">
-            <span class="content-category">Segurança • Azure <em class="content-date">· out 2026</em></span>
-            <span class="content-number">06</span>
-          </div>
-
-          <h3>Azure Firewall Premium: inspeção de saída que um NSG nunca vai fazer</h3>
-
-          <p>
-            O que acontece com o tráfego de saída quando a fundação tem inspeção
-            de verdade: IDPS em deny, inspeção TLS com CA própria e o limite do
-            que o NSG enxerga.
-          </p>
-
-          <div class="content-tags">
-            <span>Azure Firewall</span>
-            <span>IDPS</span>
-            <span>TLS Inspection</span>
-            <span>Landing Zone</span>
-          </div>
-
-          <span class="content-status">Lab prático</span>
-
-          <a
-            class="content-link"
-            href="artigos/azure-firewall-premium-lab.html"
-          >
-            Ler artigo →
-          </a>
-        </article>
+        
       </div>
     </section>
 
